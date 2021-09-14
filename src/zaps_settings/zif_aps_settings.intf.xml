@@ -10,6 +10,32 @@
     <STATE>1</STATE>
     <UNICODE>X</UNICODE>
    </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>GETJOBNAMEPREFIX</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>returns the customized background job name prefix</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>GETMAXPACKAGESIZE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>returns the customized maximum package size</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>GETMAXPARALLELTASKS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>returns the customized maximum number of parallel tasks</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>GETTASKTYPE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>returns the customized task type (Batch/Dialog)</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>
