@@ -3,4 +3,18 @@ interface zif_aps_task
     interfaces:
       if_serializable_object.
 
+
+    methods:
+      getAppId
+        returning
+          value(return)   type zaps_appid,
+
+      getConfigId
+        returning
+          value(return)   type zaps_configid,
+
+      getTaskId
+        returning
+          value(return)   type zaps_taskid.
+
 endinterface.

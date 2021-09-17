@@ -3,11 +3,7 @@ interface zif_aps_task_storage
     methods:
       storeTask
         importing
-          i_appId       type zaps_appid
-          i_configId    type zaps_configid
-          i_task        type ref to zif_aps_task
-        returning
-          value(return) type zaps_taskid,
+          i_task        type ref to zif_aps_task,
       loadTask
         importing
           i_appId       type zaps_appid
