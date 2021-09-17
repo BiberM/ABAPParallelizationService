@@ -4,7 +4,7 @@ class zcl_aps_task_storage_factory definition
   create public.
 
   public section.
-    methods:
+    class-methods:
       "! <p class="shorttext synchronized" lang="en">Returns the current task storage Object</p>
       "!
       "! @parameter return | <p class="shorttext synchronized" lang="en">task storage object</p>
@@ -13,7 +13,7 @@ class zcl_aps_task_storage_factory definition
           value(return)   type ref to zif_aps_task_storage.
   protected section.
   private section.
-    data:
+    class-data:
       currentTaskStorage      type ref to zif_aps_task_storage.
 endclass.
 

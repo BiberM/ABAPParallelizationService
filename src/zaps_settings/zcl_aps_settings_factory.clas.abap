@@ -4,14 +4,14 @@ class zcl_aps_settings_factory definition
   create public.
 
   public section.
-    methods:
+    class-methods:
       provide
         importing
           i_appId     type zaps_appid
           i_configId  type zaps_configid
         returning
           value(return) type ref to zif_aps_settings
-        exceptions
+        raising
           zcx_aps_settings_unknown_app
           zcx_aps_settings_unknown_conf.
 
@@ -24,7 +24,7 @@ class zcl_aps_settings_factory definition
         instance  type ref to zif_aps_settings,
       end of objectbufferlinetype.
 
-    data:
+    class-data:
       objectBuffer  type hashed table
                          of objectBufferLineType
                          with unique key appId
