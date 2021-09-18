@@ -15,6 +15,8 @@ interface zif_aps_task
 
       getTaskId
         returning
-          value(return)   type zaps_taskid.
+          value(return)   type zaps_taskid,
+
+      start.
 
 endinterface.

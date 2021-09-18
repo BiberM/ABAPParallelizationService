@@ -27,7 +27,8 @@ class zcl_aps_task_starter_batch definition
 
       createJobChain
         importing
-          i_taskChain     type ref to zaps_task_chain.
+          i_taskChain     type ref to zaps_task_chain
+          i_chainNumber   type sytabix.
 endclass.
 
 
@@ -69,13 +70,132 @@ class zcl_aps_task_starter_batch implementation.
   endmethod.
 
   method createJobChain.
+    loop at i_taskChain->*
+    into data(task).
+      data(taskNumberInChain) = sy-tabix.
+      data(isFirstTaskOfChain) = switch abap_bool(
+                                   sy-tabix
+                                   when 1 then abap_true
+                                   else abap_false
+                                 ).
 
+      zcl_aps_task_storage_factory=>provide( )->storetask( task ).
+
+      data(jobUniqueId) = value btcjobcnt( ).
+
+      " Prefix in combination with large numbers could exceed jobname length. So it is truncated.
+      data(jobName)     = conv btcjob( |{ settings->getjobnameprefix( ) }{ i_chainnumber }/{ taskNumberInChain }| ).
+
+      call function 'JOB_OPEN'
+        exporting
+          jobname          = jobName
+          jobclass         = 'C'
+        importing
+          jobcount         = jobUniqueId
+        exceptions
+          cant_create_job  = 1
+          invalid_job_data = 2
+          jobname_missing  = 3
+          others           = 4.
+
+      if sy-subrc <> 0.
+*////////////// ToDo Error handling ///////////////
+        return.
+      endif.
+
+      call function 'JOB_SUBMIT'
+        exporting
+          authcknam                   = cl_abap_syst=>get_user_name( )
+          jobcount                    = jobUniqueId
+          jobname                     = jobName
+          report                      = 'ZAPS_BATCH_TASK_RUN'
+*////////////// ToDo: Übergabe der Parameter ///////////////////
+*          variant                     = xyz
+        exceptions
+          bad_priparams               = 1
+          bad_xpgflags                = 2
+          invalid_jobdata             = 3
+          jobname_missing             = 4
+          job_notex                   = 5
+          job_submit_failed           = 6
+          lock_failed                 = 7
+          program_missing             = 8
+          prog_abap_and_extpg_set     = 9
+          others                      = 10.
+
+      if sy-subrc <> 0.
+*///////////// ToDo: Error handling ///////////////
+        return.
+      endif.
+
+      call function 'JOB_CLOSE'
+        exporting
+*          at_opmode                   = space
+*          at_opmode_periodic          = space
+*          calendar_id                 = space
+*          event_id                    = space
+*          event_param                 = space
+*          event_periodic              = space
+          jobcount                    = jobUniqueId
+          jobname                     = jobName
+*          laststrtdt                  = NO_DATE
+*          laststrttm                  = NO_TIME
+*          prddays                     = 0
+*          prdhours                    = 0
+*          prdmins                     = 0
+*          prdmonths                   = 0
+*          prdweeks                    = 0
+*          predjob_checkstat           = space
+*          pred_jobcount               = space
+*          pred_jobname                = space
+*          sdlstrtdt                   = NO_DATE
+*          sdlstrttm                   = NO_TIME
+*          startdate_restriction       = BTC_PROCESS_ALWAYS
+*          strtimmed                   = space
+*          targetsystem                = space
+*          start_on_workday_not_before = SY-DATUM
+*          start_on_workday_nr         = 0
+*          workday_count_direction     = 0
+*          recipient_obj               =
+*          targetserver                = space
+*          dont_release                = space
+*          targetgroup                 = space
+*          direct_start                =
+*          inherit_recipient           =
+*          inherit_target              =
+*          register_child              = abap_false
+*          time_zone                   =
+*          email_notification          =
+*        importing
+*          job_was_released            =
+*        changing
+*          ret                         =
+        exceptions
+          cant_start_immediate        = 1
+          invalid_startdate           = 2
+          jobname_missing             = 3
+          job_close_failed            = 4
+          job_nosteps                 = 5
+          job_notex                   = 6
+          lock_failed                 = 7
+          invalid_target              = 8
+          invalid_time_zone           = 9
+          others                      = 10.
+
+      if sy-subrc <> 0.
+*///////////// ToDo: Error handling ///////////////
+        return.
+      endif.
+    endloop.
   endmethod.
 
   method createJobChains.
     loop at i_taskChains
     reference into data(taskChain).
-      createJobChain( taskChain ).
+      createJobChain(
+        i_taskchain   = taskChain
+        i_chainnumber = sy-tabix
+      ).
     endloop.
   endmethod.
 
