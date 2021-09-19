@@ -103,25 +103,22 @@ class zcl_aps_task_starter_batch implementation.
         return.
       endif.
 
-      call function 'JOB_SUBMIT'
-        exporting
-          authcknam                   = cl_abap_syst=>get_user_name( )
-          jobcount                    = jobUniqueId
-          jobname                     = jobName
-          report                      = 'ZAPS_BATCH_TASK_RUN'
-*////////////// ToDo: Übergabe der Parameter ///////////////////
-*          variant                     = xyz
-        exceptions
-          bad_priparams               = 1
-          bad_xpgflags                = 2
-          invalid_jobdata             = 3
-          jobname_missing             = 4
-          job_notex                   = 5
-          job_submit_failed           = 6
-          lock_failed                 = 7
-          program_missing             = 8
-          prog_abap_and_extpg_set     = 9
-          others                      = 10.
+      data(selectionScreenData) = value rsparams_tt(
+                                    ( selname = 'P_AP'
+                                      kind    = 'P'
+                                      low     = task->getAppId( ) )
+                                    ( selname = 'P_CO'
+                                      kind    = 'P'
+                                      low     = task->getConfigId( ) )
+                                    ( selname = 'P_TA'
+                                      kind    = 'P'
+                                      low     = task->getTaskId( ) )
+                                  ).
+
+      submit zaps_batch_task_run
+      with selection-table selectionScreenData
+      via job jobName number jobUniqueId
+      and return.
 
       if sy-subrc <> 0.
 *///////////// ToDo: Error handling ///////////////
