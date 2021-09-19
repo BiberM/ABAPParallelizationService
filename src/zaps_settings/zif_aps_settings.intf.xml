@@ -31,9 +31,21 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>GETNAMEOFEXECUTABLE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Returns the name of the executable</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
      <CMPNAME>GETTASKTYPE</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>returns the customized task type (Batch/Dialog)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>GETTYPEOFEXECUTABLE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Returns the type of the executable</DESCRIPT>
     </SEOCOMPOTX>
    </DESCRIPTIONS>
   </asx:values>

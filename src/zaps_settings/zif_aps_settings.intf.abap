@@ -1,8 +1,11 @@
 interface zif_aps_settings
   public.
     constants:
-      task_type_batch   type zaps_task_type value 'B',
-      task_type_dialog  type zaps_task_type value 'D'.
+      taskTypeBatch   type zaps_task_type value 'B',
+      taskTypeDialog  type zaps_task_type value 'D',
+      executableTypeReport    type zaps_executable_type value 'R',
+      executableTypeFuncUnit  type zaps_executable_type value 'F',
+      executableTypeObject    type zaps_executable_type value 'O'.
 
     methods:
       "! <p class="shorttext synchronized" lang="en">returns the customized maximum package size</p>
@@ -27,5 +30,19 @@ interface zif_aps_settings
       "! @parameter return | <p class="shorttext synchronized" lang="en">background job name prefix</p>
       getJobNamePrefix
         returning
-          value(return)   type zaps_job_prefix.
+          value(return)   type zaps_job_prefix,
+
+      "! <p class="shorttext synchronized" lang="en">Returns the type of the executable</p>
+      "!
+      "! @parameter return | <p class="shorttext synchronized" lang="en">type of the executable (report, function unit, object)</p>
+      getTypeOfExecutable
+        returning
+          value(return)   type zaps_executable_type,
+
+      "! <p class="shorttext synchronized" lang="en">Returns the name of the executable</p>
+      "!
+      "! @parameter return | <p class="shorttext synchronized" lang="en">name of the executable</p>
+      getNameOfExecutable
+        returning
+          value(return)   type zaps_executable_name.
 endinterface.

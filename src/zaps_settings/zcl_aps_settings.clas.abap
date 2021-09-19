@@ -69,8 +69,19 @@ class zcl_aps_settings implementation.
     return = parallelizationConfiguration-parallelizationtype.
   endmethod.
 
+
   method zif_aps_settings~getJobNamePrefix.
     return = parallelizationconfiguration-jobnameprefix.
+  endmethod.
+
+
+  method zif_aps_settings~gettypeofexecutable.
+    return = appDefinition-typeOfExecutable.
+  endmethod.
+
+
+  method zif_aps_settings~getnameofexecutable.
+    return = appDefinition-nameOfExecutable.
   endmethod.
 
 endclass.

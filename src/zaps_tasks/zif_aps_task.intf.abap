@@ -17,6 +17,14 @@ interface zif_aps_task
         returning
           value(return)   type zaps_taskid,
 
+      setPackage
+        importing
+          i_package       type zaps_package,
+
+      setSettings
+        importing
+          i_settings      type ref to zif_aps_settings,
+
       start.
 
 endinterface.

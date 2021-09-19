@@ -29,13 +29,13 @@ class zcl_aps_task_starter_factory implementation.
 
     return = switch #(
                settings->gettasktype( )
-               when settings->task_type_batch
+               when settings->taskTypeBatch
                  then new zcl_aps_task_starter_batch(
                         i_appid    = i_appId
                         i_configid = i_configId
                         i_settings = settings
                       )
-               when settings->task_type_dialog
+               when settings->taskTypeDialog
                  then new zcl_aps_task_starter_dialog(
                         i_appid    = i_appId
                         i_configid = i_configId

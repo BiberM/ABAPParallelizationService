@@ -41,7 +41,12 @@ class zcl_aps_task_starter_batch implementation.
   endmethod.
 
   method createTask.
-
+    return = zcl_aps_task_factory=>provide(
+        i_appid       = appId
+        i_configid    = configId
+        i_settings    = settings
+        i_packagedata = taskData->*
+    ).
   endmethod.
 
   method createTaskChains.
