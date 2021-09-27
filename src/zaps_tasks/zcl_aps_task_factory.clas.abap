@@ -12,7 +12,11 @@ class zcl_aps_task_factory definition
           i_settings      type ref to zif_aps_settings
           i_packageData   type zaps_package
         returning
-          value(return)   type ref to zif_aps_task.
+          value(return)   type ref to zif_aps_task
+        raising
+          zcx_aps_task_invalid_class
+          zcx_aps_task_instanciation_err
+          zcx_aps_task_unknown_exec_type.
 
   protected section.
   private section.
@@ -48,8 +52,8 @@ class zcl_aps_task_factory implementation.
         into @data(inheritsFromAPSTask).
 
         if sy-subrc ne 0.
-*/////////// ToDo: Erro handling ///////////////////
-          return.
+          raise exception
+          type zcx_aps_task_invalid_class.
         endif.
 
         try.
@@ -58,14 +62,20 @@ class zcl_aps_task_factory implementation.
           exporting
             i_appid    = i_appId
             i_configid = i_configId.
-        catch cx_sy_create_object_error.
-*/////////// ToDo: Erro handling ///////////////////
-          return.
+        catch cx_sy_create_object_error
+        into data(instanciationError).
+          raise exception
+          type zcx_aps_task_instanciation_err
+          exporting
+            i_previous  = instanciationError
+            i_classname = className.
         endtry.
 
       when others.
-*/////////// ToDo: Erro handling ///////////////////
-        return.
+        raise exception
+        type zcx_aps_task_unknown_exec_type
+        exporting
+          i_executabletype = i_settings->getTypeOfExecutable( ).
     endcase.
 
     return->setSettings( i_settings ).

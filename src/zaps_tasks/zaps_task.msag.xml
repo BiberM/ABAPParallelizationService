@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZAPS_TASK</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>APS: Task messages</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Executable Class specified in settings does not inherit from ZCL_APS_TASK</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>Could not create instance of the executable class &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Unknown executable type &amp;1.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>004</MSGNR>
+     <TEXT>Job creation error (name &amp;1). RC = &amp;2.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>Unable to submit runner to job (&amp;1/&amp;2).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>006</MSGNR>
+     <TEXT>Error releasing Job (&amp;1/&amp;2). RC = &amp;3.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>007</MSGNR>
+     <TEXT>Error raising start event &amp;1. RC = &amp;2.</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>

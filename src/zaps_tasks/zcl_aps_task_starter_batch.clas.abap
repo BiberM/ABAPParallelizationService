@@ -14,21 +14,36 @@ class zcl_aps_task_starter_batch definition
       createTask redefinition.
 
   private section.
+    constants:
+      c_jobStartEvent type btceventid value 'ZAPS_JOB_START' ##NO_TEXT.
+
     methods:
       createTaskChains
         importing
           i_packages      type zaps_packages
         returning
-          value(return)   type zaps_task_chains,
+          value(return)   type zaps_task_chains
+        raising
+          zcx_aps_task_invalid_class
+          zcx_aps_task_instanciation_err
+          zcx_aps_task_unknown_exec_type,
 
       createJobChains
         importing
-          i_taskChains    type zaps_task_chains,
+          i_taskChains    type zaps_task_chains
+        RAISING
+          zcx_aps_task_job_creation
+          zcx_aps_task_job_submit
+          zcx_aps_task_job_release,
 
       createJobChain
         importing
           i_taskChain     type ref to zaps_task_chain
-          i_chainNumber   type sytabix.
+          i_chainNumber   type sytabix
+        raising
+          zcx_aps_task_job_creation
+          zcx_aps_task_job_submit
+          zcx_aps_task_job_release.
 endclass.
 
 
@@ -38,6 +53,28 @@ class zcl_aps_task_starter_batch implementation.
     data(taskChains) = createTaskChains( i_packages ).
 
     createJobChains( taskChains ).
+
+    " When all job chains have been created successfully, raise the event to start them
+    cl_batch_event=>raise(
+      exporting
+        i_eventid                      = c_jobStartEvent
+        i_eventparm                    = conv btcevtparm( i_appId )
+      exceptions
+        excpt_raise_failed             = 1
+        excpt_server_accepts_no_events = 2
+        excpt_raise_forbidden          = 3
+        excpt_unknown_event            = 4
+        excpt_no_authority             = 5
+        others                         = 6
+    ).
+
+    if sy-subrc <> 0.
+      raise exception
+      type zcx_aps_task_job_event_raise
+      exporting
+        i_eventname = c_jobStartEvent
+        i_errorcode = sy-subrc.
+    endif.
   endmethod.
 
   method createTask.
@@ -75,6 +112,12 @@ class zcl_aps_task_starter_batch implementation.
   endmethod.
 
   method createJobChain.
+    data:
+      previousJobName      type btcjob,
+      previousJobUniqueId  type btcjobcnt,
+      isJobReleased        type btcchar1.
+
+
     loop at i_taskChain->*
     into data(task).
       data(taskNumberInChain) = sy-tabix.
@@ -91,6 +134,7 @@ class zcl_aps_task_starter_batch implementation.
       " Prefix in combination with large numbers could exceed jobname length. So it is truncated.
       data(jobName)     = conv btcjob( |{ settings->getjobnameprefix( ) }{ i_chainnumber }/{ taskNumberInChain }| ).
 
+      " Application jobs should always be created as lowest priority
       call function 'JOB_OPEN'
         exporting
           jobname          = jobName
@@ -104,8 +148,11 @@ class zcl_aps_task_starter_batch implementation.
           others           = 4.
 
       if sy-subrc <> 0.
-*////////////// ToDo Error handling ///////////////
-        return.
+        raise exception
+        type zcx_aps_task_job_creation
+        exporting
+          i_jobname   = jobname
+          i_errorcode = sy-subrc.
       endif.
 
       data(selectionScreenData) = value rsparams_tt(
@@ -126,68 +173,80 @@ class zcl_aps_task_starter_batch implementation.
       and return.
 
       if sy-subrc <> 0.
-*///////////// ToDo: Error handling ///////////////
-        return.
-      endif.
-
-      call function 'JOB_CLOSE'
+        raise exception
+        type zcx_aps_task_job_submit
         exporting
-*          at_opmode                   = space
-*          at_opmode_periodic          = space
-*          calendar_id                 = space
-*          event_id                    = space
-*          event_param                 = space
-*          event_periodic              = space
-          jobcount                    = jobUniqueId
-          jobname                     = jobName
-*          laststrtdt                  = NO_DATE
-*          laststrttm                  = NO_TIME
-*          prddays                     = 0
-*          prdhours                    = 0
-*          prdmins                     = 0
-*          prdmonths                   = 0
-*          prdweeks                    = 0
-*          predjob_checkstat           = space
-*          pred_jobcount               = space
-*          pred_jobname                = space
-*          sdlstrtdt                   = NO_DATE
-*          sdlstrttm                   = NO_TIME
-*          startdate_restriction       = BTC_PROCESS_ALWAYS
-*          strtimmed                   = space
-*          targetsystem                = space
-*          start_on_workday_not_before = SY-DATUM
-*          start_on_workday_nr         = 0
-*          workday_count_direction     = 0
-*          recipient_obj               =
-*          targetserver                = space
-*          dont_release                = space
-*          targetgroup                 = space
-*          direct_start                =
-*          inherit_recipient           =
-*          inherit_target              =
-*          register_child              = abap_false
-*          time_zone                   =
-*          email_notification          =
-*        importing
-*          job_was_released            =
-*        changing
-*          ret                         =
-        exceptions
-          cant_start_immediate        = 1
-          invalid_startdate           = 2
-          jobname_missing             = 3
-          job_close_failed            = 4
-          job_nosteps                 = 5
-          job_notex                   = 6
-          lock_failed                 = 7
-          invalid_target              = 8
-          invalid_time_zone           = 9
-          others                      = 10.
-
-      if sy-subrc <> 0.
-*///////////// ToDo: Error handling ///////////////
-        return.
+          i_jobname     = jobName
+          i_jobuniqueid = jobUniqueId.
       endif.
+
+      " The first job of each chain is started by an event
+      " If it would start directly it could have been finished before the successor is even released
+      if isFirstTaskOfChain = abap_true.
+        call function 'JOB_CLOSE'
+          exporting
+            event_id                    = c_jobStartEvent
+            event_param                 = conv btcevtparm( task->getAppId( ) )
+            jobcount                    = jobUniqueId
+            jobname                     = jobName
+          importing
+            job_was_released            = isJobReleased
+          exceptions
+            cant_start_immediate        = 1
+            invalid_startdate           = 2
+            jobname_missing             = 3
+            job_close_failed            = 4
+            job_nosteps                 = 5
+            job_notex                   = 6
+            lock_failed                 = 7
+            invalid_target              = 8
+            invalid_time_zone           = 9
+            others                      = 10.
+
+        if sy-subrc <> 0
+        or isJobReleased = abap_false.
+          raise exception
+          type zcx_aps_task_job_release
+          exporting
+            i_jobname     = jobName
+            i_jobuniqueid = jobUniqueId
+            i_errorcode   = sy-subrc.
+        endif.
+
+      else.
+        call function 'JOB_CLOSE'
+          exporting
+            jobcount                    = jobUniqueId
+            jobname                     = jobName
+            pred_jobcount               = previousJobUniqueId
+            pred_jobname                = previousJobName
+          importing
+            job_was_released            = isJobReleased
+          exceptions
+            cant_start_immediate        = 1
+            invalid_startdate           = 2
+            jobname_missing             = 3
+            job_close_failed            = 4
+            job_nosteps                 = 5
+            job_notex                   = 6
+            lock_failed                 = 7
+            invalid_target              = 8
+            invalid_time_zone           = 9
+            others                      = 10.
+
+        if sy-subrc <> 0
+        or isJobReleased = abap_false.
+          raise exception
+          type zcx_aps_task_job_release
+          exporting
+            i_jobname     = jobName
+            i_jobuniqueid = jobUniqueId
+            i_errorcode   = sy-subrc.
+        endif.
+      endif.
+
+      previousJobName = jobName.
+      previousJobUniqueId = jobUniqueId.
     endloop.
   endmethod.
 

@@ -55,7 +55,19 @@ class zcl_aps_task implementation.
     try.
       taskId = cl_system_uuid=>create_uuid_c32_static( ).
     catch cx_uuid_error.
-*//////// ToDo: Please what??? /////////////////////////
+      " In a normal running system this should never happen
+      " Fallback: Timestamp long (27 char) and random number
+      try.
+        data(currentTimeStamp) = value timestampl( ).
+        data(fillUp) = cl_abap_random=>create( )->packedinrange(
+                         min   = '10000'
+                         max   = '99999'
+                       ).
+      catch cx_abap_random.
+        fillUp = '4242'.
+      endtry.
+
+      taskId = |{ currentTimeStamp }{ fillUp }|.
     endtry.
   endmethod.
 

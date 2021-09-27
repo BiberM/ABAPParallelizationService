@@ -27,7 +27,11 @@ class zcl_aps_task_starter definition
         importing
           taskData      type ref to zaps_package
         returning
-          value(return) type ref to zif_aps_task.
+          value(return) type ref to zif_aps_task
+        raising
+          zcx_aps_task_invalid_class
+          zcx_aps_task_instanciation_err
+          zcx_aps_task_unknown_exec_type.
 
   private section.
 endclass.
