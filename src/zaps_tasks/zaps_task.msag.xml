@@ -50,6 +50,18 @@
      <MSGNR>007</MSGNR>
      <TEXT>Error raising start event &amp;1. RC = &amp;2.</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>008</MSGNR>
+     <TEXT>Error creating task (see previous error).</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>009</MSGNR>
+     <TEXT>Error creating job (see previous error).</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

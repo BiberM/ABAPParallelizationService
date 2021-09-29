@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>APS: Starter for dialog parallelization</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZAPS_STARTER_DIALOGTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZAPS_STARTER_DIALOG</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>Z_APS_TASK_STARTER_DIALOG</FUNCNAME>
+     <REMOTE_CALL>X</REMOTE_CALL>
+     <SHORT_TEXT>APS: Task starter dialog parallelization</SHORT_TEXT>
+     <REMOTE_BASXML>X</REMOTE_BASXML>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>I_APPID</PARAMETER>
+       <TYP>ZAPS_APPID</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>I_CONFIGID</PARAMETER>
+       <TYP>ZAPS_CONFIGID</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>I_TASKID</PARAMETER>
+       <TYP>ZAPS_TASKID</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>I_APPID</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>I_CONFIGID</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>I_TASKID</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
