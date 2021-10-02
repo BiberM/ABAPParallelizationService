@@ -88,11 +88,11 @@ class zcl_aps_batch_job implementation.
   endmethod.
 
   method zif_aps_batch_job~getjobname.
-    return = jobName.
+    result = jobName.
   endmethod.
 
   method zif_aps_batch_job~getjobuniqueid.
-    return = jobUniqueId.
+    result = jobUniqueId.
   endmethod.
 
   method zif_aps_batch_job~planAsEventTriggered.

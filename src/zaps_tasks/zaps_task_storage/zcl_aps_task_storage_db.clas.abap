@@ -38,7 +38,7 @@ class zcl_aps_task_storage_db implementation.
     try.
       call transformation id
       source xml serializedTask
-      result taskObject = return.
+      result taskObject = result.
     catch cx_transformation_error.
 *///////////////// ToDo: Exception /////////////////////*
       return.

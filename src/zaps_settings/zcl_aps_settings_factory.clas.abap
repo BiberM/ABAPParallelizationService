@@ -10,7 +10,7 @@ class zcl_aps_settings_factory definition
           i_appId     type zaps_appid
           i_configId  type zaps_configid
         returning
-          value(return) type ref to zif_aps_settings
+          value(result) type ref to zif_aps_settings
         raising
           zcx_aps_settings_unknown_app
           zcx_aps_settings_unknown_conf.
@@ -38,10 +38,10 @@ class zcl_aps_settings_factory implementation.
 
   method provide.
     try.
-      return = objectbuffer[ appid    = i_appId
+      result = objectbuffer[ appid    = i_appId
                              configid = i_configid ]-instance.
     catch cx_sy_itab_line_not_found.
-      return = new zcl_aps_settings(
+      result = new zcl_aps_settings(
                      i_appid    = i_appid
                      i_configid = i_configid
                    ).
@@ -49,7 +49,7 @@ class zcl_aps_settings_factory implementation.
       insert value objectbufferlinetype(
                      appid    = i_appId
                      configid = i_configid
-                     instance = return
+                     instance = result
                    )
       into table objectbuffer.
     endtry.

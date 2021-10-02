@@ -10,5 +10,5 @@ interface zif_aps_task_storage
           i_configId    type zaps_configid
           i_taskid      type zaps_taskid
         returning
-          value(return) type ref to zif_aps_task.
+          value(result) type ref to zif_aps_task.
 endinterface.

@@ -7,15 +7,15 @@ interface zif_aps_task
     methods:
       getAppId
         returning
-          value(return)   type zaps_appid,
+          value(result)   type zaps_appid,
 
       getConfigId
         returning
-          value(return)   type zaps_configid,
+          value(result)   type zaps_configid,
 
       getTaskId
         returning
-          value(return)   type zaps_taskid,
+          value(result)   type zaps_taskid,
 
       setPackage
         importing

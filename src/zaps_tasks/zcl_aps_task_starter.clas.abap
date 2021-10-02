@@ -26,7 +26,7 @@ class zcl_aps_task_starter definition
         importing
           taskData      type ref to zaps_package
         returning
-          value(return) type ref to zif_aps_task
+          value(result) type ref to zif_aps_task
         raising
           zcx_aps_task_creation_error.
 
@@ -45,7 +45,7 @@ class zcl_aps_task_starter implementation.
 
   method createTask.
     try.
-        return = zcl_aps_task_factory=>provide(
+        result = zcl_aps_task_factory=>provide(
             i_appid       = appid
             i_configid    = configid
             i_settings    = settings

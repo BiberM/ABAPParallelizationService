@@ -56,32 +56,32 @@ class zcl_aps_settings implementation.
 
 
   method zif_aps_settings~getmaxpackagesize.
-    return = parallelizationConfiguration-maxpackagesize.
+    result = parallelizationConfiguration-maxpackagesize.
   endmethod.
 
 
   method zif_aps_settings~getmaxparalleltasks.
-    return = parallelizationConfiguration-maxparalleltasks.
+    result = parallelizationConfiguration-maxparalleltasks.
   endmethod.
 
 
   method zif_aps_settings~gettasktype.
-    return = parallelizationConfiguration-parallelizationtype.
+    result = parallelizationConfiguration-parallelizationtype.
   endmethod.
 
 
   method zif_aps_settings~getJobNamePrefix.
-    return = parallelizationconfiguration-jobnameprefix.
+    result = parallelizationconfiguration-jobnameprefix.
   endmethod.
 
 
   method zif_aps_settings~gettypeofexecutable.
-    return = appDefinition-typeOfExecutable.
+    result = appDefinition-typeOfExecutable.
   endmethod.
 
 
   method zif_aps_settings~getnameofexecutable.
-    return = appDefinition-nameOfExecutable.
+    result = appDefinition-nameOfExecutable.
   endmethod.
 
 endclass.

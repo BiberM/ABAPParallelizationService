@@ -6,11 +6,11 @@ interface zif_aps_batch_job
     methods:
       getJobName
         returning
-          value(return)     type btcjob,
+          value(result)     type btcjob,
 
       getJobUniqueId
         returning
-          value(return)     type btcjobcnt,
+          value(result)     type btcjobcnt,
 
       create
         raising

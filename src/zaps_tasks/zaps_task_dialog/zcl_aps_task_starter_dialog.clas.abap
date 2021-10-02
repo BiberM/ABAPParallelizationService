@@ -30,7 +30,7 @@ class zcl_aps_task_starter_dialog implementation.
 
     runningTasksCount = 0.
 
-    loop at i_packages
+    loop at i_packages->*
     reference into data(package).
       if runningTasksCount >= settings->getMaxParallelTasks( ).
         wait for asynchronous tasks

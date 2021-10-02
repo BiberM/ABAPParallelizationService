@@ -15,9 +15,9 @@ class zcl_aps_task_starter_batch definition
     methods:
       createTaskChains
         importing
-          i_packages      type zaps_packages
+          i_packages      type ref to zaps_packages
         returning
-          value(return)   type zaps_task_chains
+          value(result)   type zaps_task_chains
         raising
           zcx_aps_task_creation_error,
 
@@ -72,23 +72,23 @@ class zcl_aps_task_starter_batch implementation.
 
   method createTaskChains.
     data(numberOfNeededChains) = nmin(
-                                   val1 = lines( i_packages )
+                                   val1 = lines( i_packages->* )
                                    val2 = settings->getmaxparalleltasks( )
                                  ).
 
     do numberOfNeededChains times.
       append initial line
-      to return.
+      to result.
     enddo.
 
-    loop at i_packages
+    loop at i_packages->*
     reference into data(package).
       " Modulo only works with table indices starting at 0. ABAP instead starts counting at 1.
       " This -1/+1 ensures correct indices for tasks n*numberofNeededTasks (last Chain)
       data(chainNumber) = ( ( sy-tabix - 1 ) mod numberOfNeededChains ) + 1.
 
       " ABAP doesn't like nested tables inside append command ...
-      data(chainReference) = ref #( return[ chainNumber ] ).
+      data(chainReference) = ref #( result[ chainNumber ] ).
 
       append createTask( package )
       to chainReference->*.

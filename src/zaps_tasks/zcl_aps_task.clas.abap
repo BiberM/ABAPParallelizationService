@@ -29,15 +29,15 @@ endclass.
 
 class zcl_aps_task implementation.
   method zif_aps_task~getappid.
-    return = appId.
+    result = appId.
   endmethod.
 
   method zif_aps_task~getconfigid.
-    return = configId.
+    result = configId.
   endmethod.
 
   method zif_aps_task~gettaskid.
-    return = taskId.
+    result = taskId.
   endmethod.
 
   method zif_aps_task~setpackage.

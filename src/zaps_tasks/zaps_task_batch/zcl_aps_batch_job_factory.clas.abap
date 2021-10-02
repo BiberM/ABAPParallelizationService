@@ -13,7 +13,7 @@ class zcl_aps_batch_job_factory definition
           i_taskNumberInChain type sytabix
           i_testDoubleClassName type classname default space
         returning
-          value(return)       type ref to zif_aps_batch_job.
+          value(result)       type ref to zif_aps_batch_job.
   protected section.
   private section.
     types:
@@ -35,7 +35,7 @@ endclass.
 class zcl_aps_batch_job_factory implementation.
   method provide.
     try.
-      return = instanceBuffer[
+      result = instanceBuffer[
                  chainNumber        = i_chainNumber
                  taskNumberInChain  = i_taskNumberInChain
                ]-instance.
@@ -52,7 +52,7 @@ class zcl_aps_batch_job_factory implementation.
         into @data(isUnitTestClass).
 
         if sy-subrc eq 0.
-          create object return
+          create object result
           type (i_testDoubleClassName)
           exporting
             i_task              = i_task
@@ -62,9 +62,9 @@ class zcl_aps_batch_job_factory implementation.
 
         endif.
 
-        if not return is bound
+        if not result is bound
         or i_testDoubleClassName is initial.
-          return = new zcl_aps_batch_job(
+          result = new zcl_aps_batch_job(
                          i_task              = i_task
                          i_settings          = i_settings
                          i_chainNumber       = i_chainNumber
@@ -75,7 +75,7 @@ class zcl_aps_batch_job_factory implementation.
         insert value #(
           chainNumber       = i_chainNumber
           taskNumberInChain = i_taskNumberInChain
-          instance          = return
+          instance          = result
         )
         into table instanceBuffer.
       endif.

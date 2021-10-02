@@ -12,7 +12,7 @@ class zcl_aps_task_factory definition
           i_settings      type ref to zif_aps_settings
           i_packageData   type zaps_package
         returning
-          value(return)   type ref to zif_aps_task
+          value(result)   type ref to zif_aps_task
         raising
           zcx_aps_task_invalid_class
           zcx_aps_task_instanciation_err
@@ -28,13 +28,13 @@ class zcl_aps_task_factory implementation.
   method provide.
     case i_settings->getTypeOfExecutable( ).
       when i_settings->executableTypeReport.
-        return = new zcl_aps_task_report(
+        result = new zcl_aps_task_report(
                    i_appid    = i_appId
                    i_configid = i_configId
                  ).
 
       when i_settings->executableTypeFuncUnit.
-        return = new zcl_aps_task_functionunit(
+        result = new zcl_aps_task_functionunit(
                    i_appid    = i_appId
                    i_configid = i_configId
                  ).
@@ -57,7 +57,7 @@ class zcl_aps_task_factory implementation.
         endif.
 
         try.
-          create object return
+          create object result
           type (className)
           exporting
             i_appid    = i_appId
@@ -78,8 +78,8 @@ class zcl_aps_task_factory implementation.
           i_executabletype = i_settings->getTypeOfExecutable( ).
     endcase.
 
-    return->setSettings( i_settings ).
-    return->setPackage( i_packageData ).
+    result->setSettings( i_settings ).
+    result->setPackage( i_packageData ).
 
   endmethod.
 
