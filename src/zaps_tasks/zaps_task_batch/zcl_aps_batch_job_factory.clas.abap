@@ -7,13 +7,13 @@ class zcl_aps_batch_job_factory definition
     class-methods:
       provide
         importing
-          i_task              type ref to zif_aps_task
-          i_settings          type ref to zif_aps_settings
-          i_chainNumber       type sytabix
-          i_taskNumberInChain type sytabix
+          i_task                type ref to zif_aps_task
+          i_settings            type ref to zif_aps_settings
+          i_chainNumber         type sytabix
+          i_taskNumberInChain   type sytabix
           i_testDoubleClassName type classname default space
         returning
-          value(result)       type ref to zif_aps_batch_job.
+          value(result)         type ref to zif_aps_batch_job.
   protected section.
   private section.
     types:
@@ -61,24 +61,32 @@ class zcl_aps_batch_job_factory implementation.
             i_taskNumberInChain = i_taskNumberInChain.
 
         endif.
-
-        if not result is bound
-        or i_testDoubleClassName is initial.
-          result = new zcl_aps_batch_job(
-                         i_task              = i_task
-                         i_settings          = i_settings
-                         i_chainNumber       = i_chainNumber
-                         i_taskNumberInChain = i_taskNumberInChain
-                       ).
-        endif.
-
-        insert value #(
-          chainNumber       = i_chainNumber
-          taskNumberInChain = i_taskNumberInChain
-          instance          = result
-        )
-        into table instanceBuffer.
+      else.
+        result = new zcl_aps_batch_job(
+                   i_task              = i_task
+                   i_settings          = i_settings
+                   i_chainnumber       = i_chainNumber
+                   i_tasknumberinchain = i_taskNumberInChain
+                 ).
       endif.
+
+
+      if not result is bound
+      or i_testDoubleClassName is initial.
+        result = new zcl_aps_batch_job(
+                       i_task              = i_task
+                       i_settings          = i_settings
+                       i_chainNumber       = i_chainNumber
+                       i_taskNumberInChain = i_taskNumberInChain
+                     ).
+      endif.
+
+      insert value #(
+        chainNumber       = i_chainNumber
+        taskNumberInChain = i_taskNumberInChain
+        instance          = result
+      )
+      into table instanceBuffer.
     endtry.
   endmethod.
 

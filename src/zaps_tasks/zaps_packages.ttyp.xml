@@ -9,19 +9,10 @@
     <ROWKIND>S</ROWKIND>
     <DATATYPE>STRU</DATATYPE>
     <ACCESSMODE>T</ACCESSMODE>
-    <KEYDEF>K</KEYDEF>
+    <KEYDEF>D</KEYDEF>
     <KEYKIND>N</KEYKIND>
-    <KEYFDCOUNT>0001</KEYFDCOUNT>
     <DDTEXT>APS: Packages each to be assigned to one task</DDTEXT>
    </DD40V>
-   <DD42V>
-    <DD42V>
-     <TYPENAME>ZAPS_PACKAGES</TYPENAME>
-     <KEYFDPOS>0001</KEYFDPOS>
-     <ROWTYPEPOS>0001</ROWTYPEPOS>
-     <KEYFIELD>TASKID</KEYFIELD>
-    </DD42V>
-   </DD42V>
   </asx:values>
  </asx:abap>
 </abapGit>

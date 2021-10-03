@@ -15,8 +15,6 @@ class zcl_aps_task definition
 
   protected section.
     data:
-      appId                 type zaps_appId,
-      configId              type zaps_configId,
       taskId                type zaps_taskId,
       packageToBeProcessed  type zaps_package,
       settings              type ref to zif_aps_settings.
@@ -28,11 +26,11 @@ endclass.
 
 class zcl_aps_task implementation.
   method zif_aps_task~getappid.
-    result = appId.
+    result = settings->getAppId( ).
   endmethod.
 
   method zif_aps_task~getconfigid.
-    result = configId.
+    result = settings->getConfigId( ).
   endmethod.
 
   method zif_aps_task~gettaskid.

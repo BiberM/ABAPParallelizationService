@@ -39,6 +39,11 @@ endclass.
 
 class zcl_aps_task_starter_batch implementation.
   method zif_aps_task_starter~start.
+    if not i_packages is bound
+    or i_packages->* is initial.
+      return.
+    endif.
+
     data(taskChains) = createTaskChains( i_packages ).
 
     createJobChains( taskChains ).

@@ -61,8 +61,8 @@ class zcl_aps_task_storage_db implementation.
     endtry.
 
     data(metaInfo) = value zaps_taskstore(
-        userid    = conv #( sy-datum && sy-uzeit )
-        timestamp = cl_abap_syst=>get_user_name( )
+        userid    = cl_abap_syst=>get_user_name( )
+        timestamp = conv #( sy-datum && sy-uzeit )
     ).
 
     data(taskStorageKey) = value zaps_task_storage_key(
