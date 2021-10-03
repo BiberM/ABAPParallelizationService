@@ -7,8 +7,6 @@ class zcl_aps_task_factory definition
     class-methods:
       provide
         importing
-          i_appId         type zaps_appId
-          i_configId      type zaps_configId
           i_settings      type ref to zif_aps_settings
           i_packageData   type zaps_package
         returning
@@ -28,16 +26,10 @@ class zcl_aps_task_factory implementation.
   method provide.
     case i_settings->getTypeOfExecutable( ).
       when i_settings->executableTypeReport.
-        result = new zcl_aps_task_report(
-                   i_appid    = i_appId
-                   i_configid = i_configId
-                 ).
+        result = new zcl_aps_task_report( i_settings ).
 
       when i_settings->executableTypeFuncUnit.
-        result = new zcl_aps_task_functionunit(
-                   i_appid    = i_appId
-                   i_configid = i_configId
-                 ).
+        result = new zcl_aps_task_functionunit( i_settings ).
 
       when i_settings->executableTypeObject.
         " This one is specified in the customizing.
@@ -60,8 +52,7 @@ class zcl_aps_task_factory implementation.
           create object result
           type (className)
           exporting
-            i_appid    = i_appId
-            i_configid = i_configId.
+            i_settings = i_settings.
         catch cx_sy_create_object_error
         into data(instanciationError).
           raise exception
@@ -78,7 +69,6 @@ class zcl_aps_task_factory implementation.
           i_executabletype = i_settings->getTypeOfExecutable( ).
     endcase.
 
-    result->setSettings( i_settings ).
     result->setPackage( i_packageData ).
 
   endmethod.

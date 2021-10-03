@@ -47,7 +47,7 @@ class zcl_aps_task_starter_batch implementation.
     cl_batch_event=>raise(
       exporting
         i_eventid                      = zif_aps_batch_job=>c_jobStartEvent
-        i_eventparm                    = conv btcevtparm( appId )
+        i_eventparm                    = conv btcevtparm( settings->getAppId( ) )
       exceptions
         excpt_raise_failed             = 1
         excpt_server_accepts_no_events = 2

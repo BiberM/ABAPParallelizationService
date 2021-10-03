@@ -11,8 +11,7 @@ class zcl_aps_task definition
     methods:
       constructor
         importing
-          i_appId         type zaps_appId
-          i_configId      type zaps_configId.
+          i_settings      type ref to zif_aps_settings.
 
   protected section.
     data:
@@ -44,13 +43,8 @@ class zcl_aps_task implementation.
     packageToBeProcessed = i_package.
   endmethod.
 
-  method zif_aps_task~setsettings.
-    settings = i_settings.
-  endmethod.
-
   method constructor.
-    appId = i_appId.
-    configId = i_configId.
+    settings = i_settings.
 
     try.
       taskId = cl_system_uuid=>create_uuid_c32_static( ).

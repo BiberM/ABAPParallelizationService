@@ -19,17 +19,9 @@ class zcl_parallelization_service implementation.
                        i_configid = i_configId
                      ).
 
-    data(packages) = zcl_aps_object_packetizer_fact=>provide(
-                       i_appid    = i_appId
-                       i_configid = i_configId
-                       i_settings = settings
-                     )->packetize( i_objects ).
+    data(packages) = zcl_aps_object_packetizer_fact=>provide( settings )->packetize( i_objects ).
 
-    zcl_aps_task_starter_factory=>provide(
-      i_appid    = i_appId
-      i_configid = i_configId
-      i_settings = settings
-    )->start( packages ).
+    zcl_aps_task_starter_factory=>provide( settings )->start( packages ).
   endmethod.
 
 endclass.

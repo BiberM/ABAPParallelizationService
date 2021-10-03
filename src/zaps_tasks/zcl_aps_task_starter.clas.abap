@@ -11,14 +11,10 @@ class zcl_aps_task_starter definition
     methods:
       constructor
         importing
-          i_appId     type zaps_appId
-          i_configId  type zaps_configId
           i_settings  type ref to zif_aps_settings.
 
   protected section.
     data:
-      appId     type zaps_appId,
-      configId  type zaps_configId,
       settings  type ref to zif_aps_settings.
 
     methods:
@@ -37,8 +33,6 @@ endclass.
 
 class zcl_aps_task_starter implementation.
   method constructor.
-    appId = i_appId.
-    configId = i_configId.
     settings = i_settings.
   endmethod.
 
@@ -46,8 +40,6 @@ class zcl_aps_task_starter implementation.
   method createTask.
     try.
         result = zcl_aps_task_factory=>provide(
-            i_appid       = appid
-            i_configid    = configid
             i_settings    = settings
             i_packagedata = taskdata->*
         ).

@@ -8,6 +8,18 @@ interface zif_aps_settings
       executableTypeObject    type zaps_executable_type value 'O'.
 
     methods:
+      "! <p class="shorttext synchronized" lang="en">returns the Application ID</p>
+      "! @parameter result | <p class="shorttext synchronized" lang="en">APS Application ID</p>
+      getAppId
+        returning
+          value(result)   type zaps_appid,
+
+      "! <p class="shorttext synchronized" lang="en">Returns the Configuration ID</p>
+      "! @parameter result | <p class="shorttext synchronized" lang="en">APS Configuration ID</p>
+      getConfigId
+        returning
+          value(result)   type zaps_configid,
+
       "! <p class="shorttext synchronized" lang="en">returns the customized maximum package size</p>
       "! @parameter result | <p class="shorttext synchronized" lang="en">maximum package size</p>
       getMaxPackageSize

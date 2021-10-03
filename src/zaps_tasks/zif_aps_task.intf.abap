@@ -21,10 +21,6 @@ interface zif_aps_task
         importing
           i_package       type zaps_package,
 
-      setSettings
-        importing
-          i_settings      type ref to zif_aps_settings,
-
       start.
 
 endinterface.

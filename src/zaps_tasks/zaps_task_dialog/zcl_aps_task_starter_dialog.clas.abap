@@ -46,8 +46,8 @@ class zcl_aps_task_starter_dialog implementation.
         starting new task 'ZAPS'
         calling zcl_aps_task_starter_dialog=>callback on end of task
         exporting
-          i_appid    = appId
-          i_configid = configId
+          i_appid    = settings->getAppId( )
+          i_configid = settings->getConfigId( )
           i_taskid   = task->getTaskId( )
         exceptions
           system_failure        = 1 message errorMessage

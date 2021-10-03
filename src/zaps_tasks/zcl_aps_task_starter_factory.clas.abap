@@ -7,8 +7,6 @@ class zcl_aps_task_starter_factory definition
     class-methods:
       provide
         importing
-          i_appId     type zaps_appid
-          i_configId  type zaps_configid
           i_settings  type ref to zif_aps_settings
         returning
           value(result) type ref to zif_aps_task_starter
@@ -26,17 +24,9 @@ class zcl_aps_task_starter_factory implementation.
     result = switch #(
                i_settings->gettasktype( )
                when i_settings->taskTypeBatch
-                 then new zcl_aps_task_starter_batch(
-                        i_appid    = i_appId
-                        i_configid = i_configId
-                        i_settings = i_settings
-                      )
+                 then new zcl_aps_task_starter_batch( i_settings )
                when i_settings->taskTypeDialog
-                 then new zcl_aps_task_starter_dialog(
-                        i_appid    = i_appId
-                        i_configid = i_configId
-                        i_settings = i_settings
-                      )
+                 then new zcl_aps_task_starter_dialog( i_settings )
              ).
   endmethod.
 

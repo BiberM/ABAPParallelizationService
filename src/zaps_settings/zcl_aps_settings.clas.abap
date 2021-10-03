@@ -84,4 +84,14 @@ class zcl_aps_settings implementation.
     result = appDefinition-nameOfExecutable.
   endmethod.
 
+
+  method zif_aps_settings~getappid.
+    result = appDefinition-appId.
+  endmethod.
+
+
+  method zif_aps_settings~getconfigid.
+    result = parallelizationConfiguration-configId.
+  endmethod.
+
 endclass.
