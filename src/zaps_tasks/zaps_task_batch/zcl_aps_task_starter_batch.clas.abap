@@ -29,8 +29,8 @@ class zcl_aps_task_starter_batch definition
 
       createJobChain
         importing
-          i_taskChain     type ref to zaps_task_chain
-          i_chainNumber   type sytabix
+          i_taskChain           type ref to zaps_task_chain
+          value(i_chainNumber)  type sytabix
         raising
           zcx_aps_job_creation_error.
 endclass.

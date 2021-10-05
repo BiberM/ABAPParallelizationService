@@ -13,7 +13,9 @@ class zcl_aps_batch_job_factory definition
           i_taskNumberInChain   type sytabix
           i_testDoubleClassName type classname default space
         returning
-          value(result)         type ref to zif_aps_batch_job.
+          value(result)         type ref to zif_aps_batch_job,
+
+      resetInstanceBuffer.
   protected section.
   private section.
     types:
@@ -88,6 +90,11 @@ class zcl_aps_batch_job_factory implementation.
       )
       into table instanceBuffer.
     endtry.
+  endmethod.
+
+
+  method resetInstanceBuffer.
+    clear instanceBuffer.
   endmethod.
 
 endclass.
