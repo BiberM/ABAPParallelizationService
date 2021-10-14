@@ -32,7 +32,7 @@ class zcx_aps_task_job_release definition
   private section.
     data:
       jobName     type btcJob,
-      jobUniqueId type sysubrc,
+      jobUniqueId type btcjobcnt,
       errorCode   type sysubrc.
 endclass.
 

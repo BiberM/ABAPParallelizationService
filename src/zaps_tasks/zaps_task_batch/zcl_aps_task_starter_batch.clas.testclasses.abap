@@ -20,7 +20,11 @@ class ltcl_task_starter_batch definition final for testing
       onePackage for testing raising cx_static_check,
       threeJobsMaxParallel2 for testing raising cx_static_check,
       threeJobsMaxParallel3 for testing raising cx_static_check,
-      threeJobsMaxParallel4 for testing raising cx_static_check.
+      threeJobsMaxParallel4 for testing raising cx_static_check,
+      errorJobCreation for testing raising cx_static_check,
+      errorJobReportSubmit for testing raising cx_static_check,
+      errorJobReleaseEvent for testing raising cx_static_check,
+      errorJobReleaseSuccessor for testing raising cx_static_check.
 endclass.
 
 
@@ -184,16 +188,16 @@ class ltcl_task_starter_batch implementation.
     batchJob ?= zcl_aps_batch_job_factory=>provide(
                   i_task                = new ztd_aps_task_object( settings )
                   i_settings            = settings
-                  i_chainnumber         = 1
-                  i_tasknumberinchain   = 2
+                  i_chainnumber         = 2
+                  i_tasknumberinchain   = 1
                   i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
                 ).
 
     batchJob ?= zcl_aps_batch_job_factory=>provide(
                   i_task                = new ztd_aps_task_object( settings )
                   i_settings            = settings
-                  i_chainnumber         = 1
-                  i_tasknumberinchain   = 3
+                  i_chainnumber         = 3
+                  i_tasknumberinchain   = 1
                   i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
                 ).
 
@@ -208,7 +212,7 @@ class ltcl_task_starter_batch implementation.
     " Then
     cl_abap_unit_assert=>assert_equals(
       act = ztd_aps_batch_job=>getChainCount( )
-      exp = 1
+      exp = 3
     ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -218,7 +222,17 @@ class ltcl_task_starter_batch implementation.
 
     cl_abap_unit_assert=>assert_equals(
       act = ztd_aps_batch_job=>getInstanceCountInChain( 1 )
-      exp = 3
+      exp = 1
+    ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ztd_aps_batch_job=>getInstanceCountInChain( 2 )
+      exp = 1
+    ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ztd_aps_batch_job=>getInstanceCountInChain( 3 )
+      exp = 1
     ).
   endmethod.
 
@@ -240,16 +254,16 @@ class ltcl_task_starter_batch implementation.
     batchJob ?= zcl_aps_batch_job_factory=>provide(
                   i_task                = new ztd_aps_task_object( settings )
                   i_settings            = settings
-                  i_chainnumber         = 1
-                  i_tasknumberinchain   = 2
+                  i_chainnumber         = 2
+                  i_tasknumberinchain   = 1
                   i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
                 ).
 
     batchJob ?= zcl_aps_batch_job_factory=>provide(
                   i_task                = new ztd_aps_task_object( settings )
                   i_settings            = settings
-                  i_chainnumber         = 1
-                  i_tasknumberinchain   = 3
+                  i_chainnumber         = 3
+                  i_tasknumberinchain   = 1
                   i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
                 ).
 
@@ -264,7 +278,7 @@ class ltcl_task_starter_batch implementation.
     " Then
     cl_abap_unit_assert=>assert_equals(
       act = ztd_aps_batch_job=>getChainCount( )
-      exp = 1
+      exp = 3
     ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -274,8 +288,131 @@ class ltcl_task_starter_batch implementation.
 
     cl_abap_unit_assert=>assert_equals(
       act = ztd_aps_batch_job=>getInstanceCountInChain( 1 )
-      exp = 3
+      exp = 1
     ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ztd_aps_batch_job=>getInstanceCountInChain( 2 )
+      exp = 1
+    ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ztd_aps_batch_job=>getInstanceCountInChain( 3 )
+      exp = 1
+    ).
+  endmethod.
+
+
+  method errorjobcreation.
+    " Given
+    data(packages) = value zaps_packages( ( ) ).
+    settings->setmaxpackagesize( 1 ).
+    settings->setmaxparalleltasks( 1 ).
+
+    batchJob ?= zcl_aps_batch_job_factory=>provide(
+                  i_task                = new ztd_aps_task_object( settings )
+                  i_settings            = settings
+                  i_chainnumber         = 1
+                  i_tasknumberinchain   = 1
+                  i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
+                ).
+    batchJob->setCreateFailure( ).
+
+    " When + Then
+    try.
+      cut->zif_aps_task_starter~start( ref #( packages ) ).
+    catch zcx_aps_task_creation_error.
+      cl_abap_unit_assert=>fail( 'Unexpected exception' ).
+    catch zcx_aps_job_creation_error.
+      " This is the desired result!
+    endtry.
+  endmethod.
+
+
+  method errorjobreleaseevent.
+    " Given
+    data(packages) = value zaps_packages( ( ) ).
+    settings->setmaxpackagesize( 1 ).
+    settings->setmaxparalleltasks( 1 ).
+
+    batchJob ?= zcl_aps_batch_job_factory=>provide(
+                  i_task                = new ztd_aps_task_object( settings )
+                  i_settings            = settings
+                  i_chainnumber         = 1
+                  i_tasknumberinchain   = 1
+                  i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
+                ).
+    batchJob->setEventTriggeredFailure( ).
+
+    " When + Then
+    try.
+      cut->zif_aps_task_starter~start( ref #( packages ) ).
+    catch zcx_aps_task_creation_error.
+      cl_abap_unit_assert=>fail( 'Unexpected exception' ).
+    catch zcx_aps_job_creation_error.
+      " This is the desired result!
+    endtry.
+  endmethod.
+
+
+  method errorjobreleasesuccessor.
+    " Given
+    data(packages) = value zaps_packages( ( ) ( ) ).
+    settings->setmaxpackagesize( 1 ).
+    settings->setmaxparalleltasks( 1 ).
+
+    batchJob ?= zcl_aps_batch_job_factory=>provide(
+                  i_task                = new ztd_aps_task_object( settings )
+                  i_settings            = settings
+                  i_chainnumber         = 1
+                  i_tasknumberinchain   = 1
+                  i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
+                ).
+
+    batchJob ?= zcl_aps_batch_job_factory=>provide(
+                  i_task                = new ztd_aps_task_object( settings )
+                  i_settings            = settings
+                  i_chainnumber         = 1
+                  i_tasknumberinchain   = 2
+                  i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
+                ).
+
+    batchJob->setSuccessorFailure( ).
+
+    " When + Then
+    try.
+      cut->zif_aps_task_starter~start( ref #( packages ) ).
+    catch zcx_aps_task_creation_error.
+      cl_abap_unit_assert=>fail( 'Unexpected exception' ).
+    catch zcx_aps_job_creation_error.
+      " This is the desired result!
+    endtry.
+  endmethod.
+
+
+  method errorjobreportsubmit.
+    " Given
+    data(packages) = value zaps_packages( ( ) ).
+    settings->setmaxpackagesize( 1 ).
+    settings->setmaxparalleltasks( 1 ).
+
+    batchJob ?= zcl_aps_batch_job_factory=>provide(
+                  i_task                = new ztd_aps_task_object( settings )
+                  i_settings            = settings
+                  i_chainnumber         = 1
+                  i_tasknumberinchain   = 1
+                  i_testdoubleclassname = 'ZTD_APS_BATCH_JOB'
+                ).
+    batchJob->setAddStepFailure( ).
+
+    " When + Then
+    try.
+      cut->zif_aps_task_starter~start( ref #( packages ) ).
+    catch zcx_aps_task_creation_error.
+      cl_abap_unit_assert=>fail( 'Unexpected exception' ).
+    catch zcx_aps_job_creation_error.
+      " This is the desired result!
+    endtry.
   endmethod.
 
 endclass.

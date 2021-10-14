@@ -31,7 +31,7 @@ class zcx_aps_task_job_submit definition
   private section.
     data:
       jobName     type btcJob,
-      jobUniqueId type sysubrc.
+      jobUniqueId type btcjobcnt.
 endclass.
 
 
