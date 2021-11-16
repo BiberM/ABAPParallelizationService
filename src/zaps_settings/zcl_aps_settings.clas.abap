@@ -94,4 +94,8 @@ class zcl_aps_settings implementation.
     result = parallelizationConfiguration-configId.
   endmethod.
 
+  method zif_aps_settings~getObjectSelectionClassname.
+    result = appDefinition-objectSelectionClass.
+  endmethod.
+
 endclass.

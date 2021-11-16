@@ -49,6 +49,12 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>GETOBJECTSELECTIONCLASSNAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Returns the class name to be used for object selection</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
      <CMPNAME>GETTASKTYPE</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>returns the customized task type (Batch/Dialog)</DESCRIPT>

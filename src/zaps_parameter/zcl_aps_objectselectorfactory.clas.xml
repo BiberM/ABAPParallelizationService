@@ -3,14 +3,22 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <VSEOCLASS>
-    <CLSNAME>ZCL_APS_PARAMETERS_FUNC</CLSNAME>
+    <CLSNAME>ZCL_APS_OBJECTSELECTORFACTORY</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>APS: Parameters for a function unit</DESCRIPT>
+    <DESCRIPT>APS: Object Selector Factory</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
    </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_APS_OBJECTSELECTORFACTORY</CLSNAME>
+     <CMPNAME>PROVIDEOBJECTSELECTOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Returns an instance of the class specified in customizing</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>

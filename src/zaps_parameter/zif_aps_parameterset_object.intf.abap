@@ -1,7 +1,7 @@
-interface zif_aps_parameters_object
+interface zif_aps_parameterset_object
   public.
     interfaces:
-      zif_aps_parameters.
+      zif_aps_parameterSet.
 
     methods:
       addImporting

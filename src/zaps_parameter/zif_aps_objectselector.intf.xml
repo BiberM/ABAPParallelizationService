@@ -3,13 +3,21 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <VSEOINTERF>
-    <CLSNAME>ZIF_APS_PARAMETERS_REPORT</CLSNAME>
+    <CLSNAME>ZIF_APS_OBJECTSELECTOR</CLSNAME>
     <LANGU>E</LANGU>
-    <DESCRIPT>APS: Parameter for a report</DESCRIPT>
+    <DESCRIPT>APS: Object Selector</DESCRIPT>
     <EXPOSURE>2</EXPOSURE>
     <STATE>1</STATE>
     <UNICODE>X</UNICODE>
    </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_OBJECTSELECTOR</CLSNAME>
+     <CMPNAME>CALCULATEOBJECTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Supplies the to be parallelized objets/parameter sets</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>

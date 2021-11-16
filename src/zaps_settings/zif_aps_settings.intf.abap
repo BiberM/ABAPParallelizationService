@@ -56,5 +56,12 @@ interface zif_aps_settings
       "! @parameter result | <p class="shorttext synchronized" lang="en">name of the executable</p>
       getNameOfExecutable
         returning
-          value(result)   type zaps_executable_name.
+          value(result)   type zaps_executable_name,
+
+      "! <p class="shorttext synchronized" lang="en">Returns the class name to be used for object selection</p>
+      "!
+      "! @parameter result | <p class="shorttext synchronized" lang="en">Name of class for object selection</p>
+      getObjectSelectionClassName
+        returning
+          value(result)   type zaps_obj_sel_classname.
 endinterface.

@@ -3,7 +3,7 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <VSEOINTERF>
-    <CLSNAME>ZIF_APS_PARAMETERS_OBJECT</CLSNAME>
+    <CLSNAME>ZIF_APS_PARAMETERSET_OBJECT</CLSNAME>
     <LANGU>E</LANGU>
     <DESCRIPT>APS: Parameter for an object/method</DESCRIPT>
     <EXPOSURE>2</EXPOSURE>

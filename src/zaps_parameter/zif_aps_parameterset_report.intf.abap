@@ -1,7 +1,7 @@
-interface zif_aps_parameters_report
+interface zif_aps_parameterset_report
   public.
     interfaces:
-      zif_aps_parameters.
+      zif_aps_parameterSet.
 
     methods:
       addParameter
