@@ -43,6 +43,13 @@ endclass.
 
 class zcl_aps_parameterset_func implementation.
   method zif_aps_parameterSet_func~addchanging.
+    if not line_exists( funcChangingParameters[ parameter = i_parametername ] ).
+      raise exception
+        type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parametername ).
+    endif.
+
     insert value #(
       name = i_parametername
       kind = abap_func_changing
@@ -132,9 +139,17 @@ class zcl_aps_parameterset_func implementation.
 
 
   method zif_aps_parameterSet_func~addexporting.
+    if not line_exists( funcExportingParameters[ parameter = i_parametername ] ).
+      raise exception
+        type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parametername ).
+    endif.
+
+    " exporting of func unit is importing for caller
     insert value #(
       name = i_parametername
-      kind = abap_func_exporting
+      kind = abap_func_importing
     )
     into table functionUnitParameters
     reference into data(currentParameter).
@@ -166,9 +181,17 @@ class zcl_aps_parameterset_func implementation.
   endmethod.
 
   method zif_aps_parameterSet_func~addimporting.
+    if not line_exists( funcImportingParameters[ parameter = i_parametername ] ).
+      raise exception
+        type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parametername ).
+    endif.
+
+    " importing of func unit is exporting for caller
     insert value #(
       name  = i_parametername
-      kind  = abap_func_importing
+      kind  = abap_func_exporting
       value = i_parametervalue
     )
     into table functionUnitParameters
@@ -184,6 +207,13 @@ class zcl_aps_parameterset_func implementation.
   endmethod.
 
   method zif_aps_parameterSet_func~addtables.
+    if not line_exists( funcTableParameters[ parameter = i_parametername ] ).
+      raise exception
+        type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parametername ).
+    endif.
+
     insert value #(
       name = i_parametername
       kind = abap_func_tables
@@ -205,8 +235,18 @@ class zcl_aps_parameterset_func implementation.
         i_parametername   = i_parametername
       ).
 
+      try.
+        data(tableDescriptor) = cast cl_abap_datadescr( cl_abap_tabledescr=>create( dataType ) ).
+      catch cx_sy_table_creation
+            cx_sy_move_cast_error.
+        raise exception
+        type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parametername ).
+      endtry.
+
       create data currentParameter->value
-      type handle dataType.
+      type handle tableDescriptor.
 
     catch cx_sy_itab_line_not_found
           cx_sy_create_data_error.
@@ -407,6 +447,12 @@ class zcl_aps_parameterset_func implementation.
              )
       into table result.
     endloop.
+
+    insert value #(
+             name = 'OTHERS'
+             value = lines( funcExceptions ) + 1
+           )
+    into table result.
   endmethod.
 
 
