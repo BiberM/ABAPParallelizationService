@@ -22,7 +22,7 @@ class zcl_aps_task_object implementation.
     data(classnameOfExecutable) = conv classname( settings->getNameOfExecutable( ) ).
 
     loop at packageToBeProcessed-selections
-    reference into data(parameterSet).
+    into data(parameterSet).
       try.
         create object executableObject
         type (classnameOfExecutable)

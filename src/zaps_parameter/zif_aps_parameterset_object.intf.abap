@@ -4,45 +4,20 @@ interface zif_aps_parameterset_object
       zif_aps_parameterSet.
 
     methods:
-      addImporting
+      setDataReference
         importing
-          i_parameterName       type abap_parmname
-          i_parameterValue      type ref to data,
+          i_dataRef             type ref to data,
 
-      addExporting
+      setObject
         importing
-          i_parameterName       type abap_parmname,
+          i_object              type ref to if_serializable_object,
 
-      addChanging
-        importing
-          i_parameterName       type abap_parmname,
-
-      addReturning
-        importing
-          i_parameterName       type abap_parmname,
-
-      getExportingValue
+      getDataReference
         returning
           value(result)         type ref to data,
 
-      getChangingValue
-        returning
-          value(result)         type ref to data,
-
-      getReturningValue
-        returning
-          value(result)         type ref to data,
-
-      setExportingValue
+      getObject
         importing
-          i_parameterValue      type ref to data,
-
-      setChangingValue
-        importing
-          i_parameterValue      type ref to data,
-
-      setReturningValue
-        importing
-          i_parameterValue      type ref to data.
+          value(result)         type ref to if_serializable_object.
 
 endinterface.

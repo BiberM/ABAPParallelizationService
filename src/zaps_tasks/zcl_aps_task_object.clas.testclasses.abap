@@ -12,7 +12,7 @@ class ltd_executable definition
       start redefinition,
       constructor
         importing
-          i_parameterSet  type ref to zaps_parameter_set.
+          i_parameterSet  type ref to zif_aps_parameterset.
 
   protected section.
   private section.

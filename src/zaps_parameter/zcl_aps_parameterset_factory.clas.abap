@@ -9,12 +9,16 @@ class zcl_aps_parameterset_factory definition
         importing
           i_settings      type ref to zif_aps_settings
         returning
-          value(result)   type ref to zif_aps_parameterSet_func,
+          value(result)   type ref to zif_aps_parameterSet_func
+        raising
+          zcx_aps_unknown_executable,
       provideReportParameters
         importing
           i_settings      type ref to zif_aps_settings
         returning
-          value(result)   type ref to zif_aps_parameterSet_report,
+          value(result)   type ref to zif_aps_parameterSet_report
+        raising
+          zcx_aps_unknown_executable,
       provideObjectParameters
         importing
           i_settings      type ref to zif_aps_settings
@@ -33,7 +37,7 @@ class zcl_aps_parameterset_factory implementation.
   endmethod.
 
   method provideobjectparameters.
-
+    result = new zcl_aps_parameterset_object( ).
   endmethod.
 
   method providereportparameters.

@@ -7,13 +7,13 @@ class zcl_aps_executable_object definition
     methods:
       constructor
         importing
-          i_parameterSet    type ref to zaps_parameter_set,
+          i_parameterSet    type ref to zif_aps_parameterset,
 
       start abstract.
 
   protected section.
     data:
-      parameterSet      type ref to zaps_parameter_set.
+      parameterSet      type ref to zif_aps_parameterset.
 
   private section.
 endclass.

@@ -11,7 +11,9 @@ class zcl_aps_parameterset_func definition
     methods:
       constructor
         importing
-          i_settings      type ref to zif_aps_settings.
+          i_settings      type ref to zif_aps_settings
+        raising
+          zcx_aps_unknown_executable.
 
   protected section.
   private section.
@@ -25,7 +27,9 @@ class zcl_aps_parameterset_func definition
       funcTableparameters       type rsfb_tbl.
 
     methods:
-      loadFunctionUnitParams,
+      loadFunctionUnitParams
+        raising
+          zcx_aps_unknown_executable,
 
       createDataTypeDescriptor
         importing
@@ -430,8 +434,10 @@ class zcl_aps_parameterset_func implementation.
         others                  = 4.
 
     if sy-subrc <> 0.
-*/////////// ToDo: error handling ///////////////////////*
-      return.
+      raise exception
+      type zcx_aps_unknown_executable
+        exporting
+          i_executablename = settings->getNameOfExecutable( ).
     endif.
   endmethod.
 
