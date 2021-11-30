@@ -19,7 +19,10 @@ class zcl_parallelization_service implementation.
                        i_configid = i_configId
                      ).
 
-    data(objects) = zcl_aps_objectSelectorFactory=>provideObjectSelector( settings )->calculateObjects( i_infoFromCaller ).
+    data(objects) = zcl_aps_objectSelectorFactory=>provideObjectSelector( settings )->calculateObjects(
+                      i_settings        = settings
+                      i_infoFromCaller  = i_infoFromCaller
+                    ).
 
     data(packages) = zcl_aps_object_packetizer_fact=>provide( settings )->packetize( objects ).
 

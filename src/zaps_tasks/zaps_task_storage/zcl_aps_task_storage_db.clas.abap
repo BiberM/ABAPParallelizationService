@@ -18,7 +18,9 @@ class zcl_aps_task_storage_db implementation.
 
   method zif_aps_task_storage~loadtask.
     data:
-      serializedTask    type string.
+      serializedTask    type xstring,
+      storageLine       type zaps_taskstore,
+      taskStorageKeyString  type c length 132.
 
     data(taskStorageKey) = value zaps_task_storage_key(
                              appid    = i_appId
@@ -28,7 +30,8 @@ class zcl_aps_task_storage_db implementation.
 
     import taskobject = serializedTask
     from database zaps_taskstore(ts)
-    id taskstoragekey.
+    to storageLine
+    id taskStorageKey.
 
     if sy-subrc ne 0.
 *///////////////// ToDo: Exception /////////////////////*
@@ -39,10 +42,23 @@ class zcl_aps_task_storage_db implementation.
       call transformation id
       source xml serializedTask
       result taskObject = result.
-    catch cx_transformation_error.
+    catch cx_transformation_error
+    into data(transformationError).
 *///////////////// ToDo: Exception /////////////////////*
       return.
     endtry.
+
+    delete from zaps_taskstore
+    where relid     = 'TS'
+      and appid     = @i_appId
+      and configid  = @i_configId
+      and taskid    = @i_taskId.
+
+    if sy-subrc ne 0.
+      " was that destructive reading what we did before????
+      return.
+    endif.
+
   endmethod.
 
 
@@ -53,6 +69,7 @@ class zcl_aps_task_storage_db implementation.
 
     try.
       call transformation id
+      options data_refs = 'heap-or-create'
       source taskObject = i_task
       result xml data(serializedTask).
     catch cx_transformation_error.

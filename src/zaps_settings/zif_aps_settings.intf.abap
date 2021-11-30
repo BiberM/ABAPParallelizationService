@@ -1,5 +1,8 @@
 interface zif_aps_settings
   public.
+    interfaces:
+      if_serializable_object.
+
     constants:
       taskTypeBatch   type zaps_task_type value 'B',
       taskTypeDialog  type zaps_task_type value 'D',
