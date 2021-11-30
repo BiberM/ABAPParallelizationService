@@ -14,6 +14,12 @@
      <MSGNR>001</MSGNR>
      <TEXT>Unknown parameter &amp;1.</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_PARAMETER</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>Executable &amp;1 does not exist.</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

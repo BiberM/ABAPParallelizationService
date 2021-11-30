@@ -29,7 +29,7 @@ endclass.
 
 class zcl_aps_parameterset_factory implementation.
   method providefunctionunitparameters.
-*    result = new
+    result = new zcl_aps_parameterset_func( i_settings ).
   endmethod.
 
   method provideobjectparameters.
@@ -37,7 +37,7 @@ class zcl_aps_parameterset_factory implementation.
   endmethod.
 
   method providereportparameters.
-
+    result = new zcl_aps_parameterset_report( i_settings ).
   endmethod.
 
 endclass.
