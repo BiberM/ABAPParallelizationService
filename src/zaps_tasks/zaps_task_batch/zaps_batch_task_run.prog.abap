@@ -20,5 +20,7 @@ report zaps_batch_task_run.
 
 
   if task is bound.
+    task->setStatusStarted( ).
     task->start( ).
+    task->setStatusFinished( ).
   endif.

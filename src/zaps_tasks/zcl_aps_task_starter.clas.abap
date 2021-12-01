@@ -43,6 +43,8 @@ class zcl_aps_task_starter implementation.
             i_settings    = settings
             i_packagedata = taskdata->*
         ).
+
+        result->setstatuscreated( ).
     catch zcx_aps_task_invalid_class
           zcx_aps_task_instanciation_err
           zcx_aps_task_unknown_exec_type

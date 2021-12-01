@@ -10,6 +10,13 @@ class zcl_aps_task_storage_db definition
 
   protected section.
   private section.
+    methods:
+      setTaskStatus
+        importing
+          i_appid    type zaps_appid
+          i_configid type zaps_configid
+          i_taskid   type zaps_taskid
+          i_status   type zaps_task_status.
 endclass.
 
 
@@ -97,6 +104,66 @@ class zcl_aps_task_storage_db implementation.
 *///////////////// ToDo: Exception /////////////////////*
       return.
     endif.
+  endmethod.
+
+
+  method zif_aps_task_storage~settaskstatuscreated.
+    setTaskStatus(
+      i_appid    = i_appid
+      i_configid = i_configid
+      i_taskid   = i_taskid
+      i_status   = 'C'
+    ).
+  endmethod.
+
+
+  method zif_aps_task_storage~settaskstatusfinished.
+    setTaskStatus(
+      i_appid    = i_appid
+      i_configid = i_configid
+      i_taskid   = i_taskid
+      i_status   = 'F'
+    ).
+  endmethod.
+
+
+  method zif_aps_task_storage~setTaskStatusStarted.
+    setTaskStatus(
+      i_appid    = i_appid
+      i_configid = i_configid
+      i_taskid   = i_taskid
+      i_status   = 'S'
+    ).
+  endmethod.
+
+
+  method zif_aps_task_storage~settaskstatusaborted.
+    setTaskStatus(
+      i_appid    = i_appid
+      i_configid = i_configid
+      i_taskid   = i_taskid
+      i_status   = 'A'
+    ).
+  endmethod.
+
+
+  method setTaskStatus.
+
+    data(dataset) = value zaps_taskstatus(
+      appid    = i_appId
+      configid = i_configId
+      taskid   = i_taskId
+      status   = i_status
+    ).
+
+    modify zaps_taskstatus
+    from @dataset.
+
+    if sy-subrc <> 0.
+*//////////// ToDo: error handling /////////////////////////////*
+      return.
+    endif.
+
   endmethod.
 
 endclass.

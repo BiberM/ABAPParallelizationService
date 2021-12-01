@@ -19,6 +19,9 @@ class zcl_aps_task_starter_dialog definition
   private section.
     class-data:
       runningTasksCount   type int8.
+
+    methods:
+      doWaitUntilFinished.
 endclass.
 
 
@@ -62,6 +65,8 @@ class zcl_aps_task_starter_dialog implementation.
 
       runningTasksCount = runningTasksCount + 1.
     endloop.
+
+    doWaitUntilFinished( ).
   endmethod.
 
   method callback.
@@ -81,6 +86,22 @@ class zcl_aps_task_starter_dialog implementation.
     endif.
 
     runningTasksCount = runningTasksCount - 1.
+  endmethod.
+
+
+  method doWaitUntilFinished.
+    if settings->shouldwaituntilfinished( ) = abap_false.
+      return.
+    endif.
+
+    " We do have a problem here. Based on the call position
+    " we do know that the start of all tasks has at least been tried.
+    " We could check for runningTasksCount to be zero but that will never happen
+    " in case of at least one call resulting in a dump. We will never notice that
+    " and therefor will never decrease runningTasksCount. As we have no identifier
+    " to check the dialog process we can't check that either.
+    " So currently there is absolutely no chance implementing that feature.
+    return.
   endmethod.
 
 endclass.

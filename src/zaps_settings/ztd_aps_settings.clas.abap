@@ -97,4 +97,14 @@ class ztd_aps_settings implementation.
     parallelizationConfiguration-maxparalleltasks = i_maxParallelTasks.
   endmethod.
 
+
+  method zif_aps_settings~getobjectselectionclassname.
+    result = appDefinition-objectselectionclass.
+  endmethod.
+
+
+  method zif_aps_settings~shouldwaituntilfinished.
+    result = parallelizationConfiguration-waituntilfinished.
+  endmethod.
+
 endclass.

@@ -21,6 +21,14 @@ interface zif_aps_task
         importing
           i_package       type zaps_package,
 
-      start.
+      start,
+
+      setStatusCreated,
+
+      setStatusStarted,
+
+      setStatusFinished,
+
+      setStatusAborted.
 
 endinterface.

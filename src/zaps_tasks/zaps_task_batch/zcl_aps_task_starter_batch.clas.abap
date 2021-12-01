@@ -12,6 +12,15 @@ class zcl_aps_task_starter_batch definition
   protected section.
 
   private section.
+    types:
+      jobReference        type ref to zif_aps_batch_job,
+      jobChainType        type standard table of jobReference
+                               with default key,
+      jobChainListType    type standard table of jobChainType
+                               with default key,
+      jobNameRange        type range of btcjob,
+      jobUniqueIdRange    type range of btcjobcnt.
+
     methods:
       createTaskChains
         importing
@@ -24,6 +33,8 @@ class zcl_aps_task_starter_batch definition
       createJobChains
         importing
           i_taskChains    type zaps_task_chains
+        returning
+          value(result)   type jobChainListType
         raising
           zcx_aps_job_creation_error,
 
@@ -31,8 +42,14 @@ class zcl_aps_task_starter_batch definition
         importing
           i_taskChain           type ref to zaps_task_chain
           value(i_chainNumber)  type sytabix
+        returning
+          value(result)         type jobChainType
         raising
-          zcx_aps_job_creation_error.
+          zcx_aps_job_creation_error,
+
+      doWaitUntilFinished
+        importing
+          i_jobChains           type jobChainListType.
 endclass.
 
 
@@ -46,7 +63,7 @@ class zcl_aps_task_starter_batch implementation.
 
     data(taskChains) = createTaskChains( i_packages ).
 
-    createJobChains( taskChains ).
+    data(jobChains) = createJobChains( taskChains ).
 
     " When all job chains have been created successfully, raise the event to start them
     cl_batch_event=>raise(
@@ -73,6 +90,8 @@ class zcl_aps_task_starter_batch implementation.
       exporting
         i_previous  = detailledError.
     endif.
+
+    doWaitUntilFinished( jobChains ).
   endmethod.
 
   method createTaskChains.
@@ -135,6 +154,9 @@ class zcl_aps_task_starter_batch implementation.
           job->planAsSuccessor( previousJob ).
         endif.
 
+        insert job
+        into table result.
+
         previousJob = job.
       endloop.
     catch zcx_aps_task_job_creation
@@ -151,11 +173,35 @@ class zcl_aps_task_starter_batch implementation.
   method createJobChains.
     loop at i_taskChains
     reference into data(taskChain).
-      createJobChain(
-        i_taskchain   = taskChain
-        i_chainnumber = sy-tabix
-      ).
+      insert createJobChain(
+               i_taskchain   = taskChain
+               i_chainnumber = sy-tabix
+             )
+      into table result.
     endloop.
+  endmethod.
+
+
+  method doWaitUntilFinished.
+    if settings->shouldwaituntilfinished( ) = abap_false.
+      return.
+    endif.
+
+    " The jobs of one chain start in a sequence but do not care about
+    " the result of the predecessor (finished/aborted). So all jobs
+    " must have one of these status in order to be finished.
+    data(jobList) = value zaps_batch_job_list(
+                       for jobChain in i_jobChains
+                         for job in jobChain
+                         (
+                           jobname      = job->getjobname( )
+                           jobuniqueid  = job->getjobuniqueid( )
+                         )
+                     ).
+
+    while zcl_aps_batch_job=>arealljobsfinished( jobList ) = abap_false.
+      wait up to 10 seconds.
+    endwhile.
   endmethod.
 
 endclass.

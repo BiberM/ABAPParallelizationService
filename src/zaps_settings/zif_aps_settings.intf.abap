@@ -66,5 +66,12 @@ interface zif_aps_settings
       "! @parameter result | <p class="shorttext synchronized" lang="en">Name of class for object selection</p>
       getObjectSelectionClassName
         returning
-          value(result)   type zaps_obj_sel_classname.
+          value(result)   type zaps_obj_sel_classname,
+
+      "! <p class="shorttext synchronized" lang="en">Should framework wait until all tasks finished?</p>
+      "!
+      "! @parameter result | <p class="shorttext synchronized" lang="en">wait until all tasks finished?</p>
+      shouldWaitUntilFinished
+        returning
+          value(result)   type abap_bool.
 endinterface.

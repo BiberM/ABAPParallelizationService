@@ -65,6 +65,12 @@
      <LANGU>E</LANGU>
      <DESCRIPT>Returns the type of the executable</DESCRIPT>
     </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>SHOULDWAITUNTILFINISHED</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Should framework wait until all tasks finished?</DESCRIPT>
+    </SEOCOMPOTX>
    </DESCRIPTIONS>
   </asx:values>
  </asx:abap>

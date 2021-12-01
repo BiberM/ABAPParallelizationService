@@ -15,7 +15,9 @@ function z_aps_task_starter_dialog.
 
 
   if task is bound.
+    task->setStatusStarted( ).
     task->start( ).
+    task->setStatusFinished( ).
   endif.
 
 

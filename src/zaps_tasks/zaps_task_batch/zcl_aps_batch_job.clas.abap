@@ -8,6 +8,13 @@ class zcl_aps_batch_job definition
     interfaces:
       zif_aps_batch_job.
 
+    class-methods:
+      areAllJobsFinished
+        importing
+          i_jobList           type zaps_batch_job_list
+        returning
+          value(result)       type abap_bool.
+
     methods:
       constructor
         importing
@@ -142,6 +149,7 @@ class zcl_aps_batch_job implementation.
         jobname                     = jobName
         pred_jobcount               = i_predecessor->getJobUniqueId( )
         pred_jobname                = i_predecessor->getJobName( )
+        predjob_checkstat           = abap_false
       importing
         job_was_released            = isJobReleased
       exceptions
@@ -164,6 +172,30 @@ class zcl_aps_batch_job implementation.
         i_jobname     = jobName
         i_jobuniqueid = jobUniqueId
         i_errorcode   = sy-subrc.
+    endif.
+  endmethod.
+
+
+  method areAllJobsFinished.
+    result = abap_false.
+
+    if i_jobList is initial.
+      return.
+    endif.
+
+    select status
+    from tbtco
+    for all entries in @i_jobList
+    where jobname   =  @i_jobList-jobname
+      and jobcount  =  @i_jobList-jobuniqueid
+      and status    <> 'F'
+      and status    <> 'A'
+    into @data(stillRunning)
+    up to 1 rows.
+    endselect.
+
+    if sy-subrc <> 0.
+      result = abap_true.
     endif.
   endmethod.
 

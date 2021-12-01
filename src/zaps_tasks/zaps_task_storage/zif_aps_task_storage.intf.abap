@@ -4,11 +4,36 @@ interface zif_aps_task_storage
       storeTask
         importing
           i_task        type ref to zif_aps_task,
+
       loadTask
         importing
           i_appId       type zaps_appid
           i_configId    type zaps_configid
           i_taskid      type zaps_taskid
         returning
-          value(result) type ref to zif_aps_task.
+          value(result) type ref to zif_aps_task,
+
+      setTaskStatusCreated
+        importing
+          i_appId       type zaps_appid
+          i_configId    type zaps_configid
+          i_taskid      type zaps_taskid,
+
+      setTaskStatusStarted
+        importing
+          i_appId       type zaps_appid
+          i_configId    type zaps_configid
+          i_taskid      type zaps_taskid,
+
+      setTaskStatusFinished
+        importing
+          i_appId       type zaps_appid
+          i_configId    type zaps_configid
+          i_taskid      type zaps_taskid,
+
+      setTaskStatusAborted
+        importing
+          i_appId       type zaps_appid
+          i_configId    type zaps_configid
+          i_taskid      type zaps_taskid.
 endinterface.
