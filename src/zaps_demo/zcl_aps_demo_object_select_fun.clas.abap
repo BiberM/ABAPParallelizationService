@@ -1,4 +1,4 @@
-class zcl_aps_demo_object_selector definition
+class zcl_aps_demo_object_select_fun definition
   public
   final
   create public.
@@ -14,18 +14,19 @@ endclass.
 
 
 
-class zcl_aps_demo_object_selector implementation.
+class zcl_aps_demo_object_select_fun implementation.
   method zif_aps_objectselector~calculateObjects.
     do 10 times.
       data(currentLoopCounter) = sy-index.
 
       try.
-        data(singleExecutionParameters) = zcl_aps_parameterset_factory=>providereportparameters( i_settings ).
+        data(singleExecutionParameters) = zcl_aps_parameterset_factory=>providefunctionunitparameters( i_settings ).
 
-        singleExecutionParameters->addParameter(
-          i_parametername  = 'P_INDEX'
-          i_parametervalue = conv #( currentLoopCounter )
+        singleExecutionParameters->addimporting(
+          i_parametername  = 'I_INDEX'
+          i_parametervalue = ref #( currentLoopCounter )
         ).
+
       catch zcx_aps_unknown_executable
             zcx_aps_unknown_parameter.
 *////////////// ToDo: proper error handling ////////////////////////*

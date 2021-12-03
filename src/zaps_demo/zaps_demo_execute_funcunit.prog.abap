@@ -1,16 +1,16 @@
 *&---------------------------------------------------------------------*
-*& Report zaps_demo_execute_report
+*& Report zaps_demo_execute_funcunit
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-report zaps_demo_execute_report.
+report zaps_demo_execute_funcunit.
   " This part is normally done in table customizing
   " due to git restrictions this is done within the report
   data(appDefinition) = value zaps_paraapp(
-    appid                = 'APS_DEMO_REPORT'
-    typeofexecutable     = 'R'
-    nameofexecutable     = 'ZAPS_DEMO_REPORT_EXECUTABLE'
-    objectselectionclass = 'ZCL_APS_DEMO_OBJECT_SELECT_REP'
+    appid                = 'APS_DEMO_FUNCUNIT'
+    typeofexecutable     = 'F'
+    nameofexecutable     = 'Z_APS_DEMO_FUNC_EXECUTABLE'
+    objectselectionclass = 'ZCL_APS_DEMO_OBJECT_SELECT_FUNC'
   ).
 
   modify zaps_paraapp
@@ -18,8 +18,8 @@ report zaps_demo_execute_report.
 
 
   data(configDefinition) = value zaps_paraconf(
-      appid               = 'APS_DEMO_REPORT'
-      configid            = 'DEMO_REPORT_5_1_BATCH'
+      appid               = 'APS_DEMO_FUNCUNIT'
+      configid            = 'DEMO_FUNCUNIT_5_1_BATCH'
       parallelizationtype = 'B'
       maxpackagesize      = 1
       maxparalleltasks    = 5
@@ -36,8 +36,8 @@ report zaps_demo_execute_report.
 
   try.
     go_parallelization->zif_parallelization_service~start(
-      i_appid          = 'APS_DEMO_REPORT'
-      i_configid       = 'DEMO_REPORT_5_1_BATCH'
+      i_appid          = 'APS_DEMO_FUNCUNIT'
+      i_configid       = 'DEMO_FUNCUNIT_5_1_BATCH'
     ).
   catch zcx_aps_settings_unknown_app
         zcx_aps_settings_unknown_conf
@@ -51,8 +51,8 @@ report zaps_demo_execute_report.
 
   " Again this is not necessary within real world usage
   delete from zaps_paraapp
-  where appid = 'APS_DEMO_REPORT'.
+  where appid = 'APS_DEMO_FUNCUNIT'.
 
   delete from zaps_paraconf
-  where appid     = 'APS_DEMO_REPORT'
-    and configid  = 'DEMO_REPORT_5_1_BATCH'.
+  where appid     = 'APS_DEMO_FUNCUNIT'
+    and configid  = 'DEMO_FUNCUNIT_5_1_BATCH'.

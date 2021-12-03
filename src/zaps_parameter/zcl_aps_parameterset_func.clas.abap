@@ -38,6 +38,15 @@ class zcl_aps_parameterset_func definition
         returning
           value(result)     type ref to cl_abap_datadescr
         raising
+          zcx_aps_unknown_parameter,
+
+      createDataTypeDescriptorByRef
+        importing
+          i_dataRef         type ref to data
+          i_parametername   type abap_parmname
+        returning
+          value(result)     type ref to cl_abap_datadescr
+        raising
           zcx_aps_unknown_parameter.
 
 
@@ -142,6 +151,38 @@ class zcl_aps_parameterset_func implementation.
   endmethod.
 
 
+  method createDataTypeDescriptorByRef.
+
+    try.
+      cl_abap_typedescr=>describe_by_data_ref(
+        exporting
+          p_data_ref = i_dataRef
+        receiving
+          p_descr_ref = data(datatypeDescriptor)
+        exceptions
+          reference_is_initial  = 1
+          others                = 2
+      ).
+
+      if sy-subrc ne 0.
+        raise exception
+          type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parametername ).
+      endif.
+
+      result = cast cl_abap_datadescr( dataTypeDescriptor ).
+    catch cx_sy_itab_line_not_found
+          cx_sy_move_cast_error.
+      raise exception
+        type zcx_aps_unknown_parameter
+        exporting
+          i_parametername = conv #( i_parametername ).
+    endtry.
+
+  endmethod.
+
+
   method zif_aps_parameterSet_func~addexporting.
     if not line_exists( funcExportingParameters[ parameter = i_parametername ] ).
       raise exception
@@ -196,7 +237,6 @@ class zcl_aps_parameterset_func implementation.
     insert value #(
       name  = i_parametername
       kind  = abap_func_exporting
-      value = i_parametervalue
     )
     into table functionUnitParameters
     reference into data(currentParameter).
@@ -207,6 +247,44 @@ class zcl_aps_parameterset_func implementation.
         type zcx_aps_unknown_parameter
           exporting
             i_parametername = conv #( i_parametername ).
+    endif.
+
+    try.
+      data(dataType) = createDataTypeDescriptorByRef(
+        i_dataRef         = i_parameterValue
+        i_parametername   = i_parametername
+      ).
+
+      create data currentParameter->value
+      type handle dataType.
+
+    catch cx_sy_itab_line_not_found
+          cx_sy_create_data_error.
+      raise exception
+        type zcx_aps_unknown_parameter
+        exporting
+          i_parametername = conv #( i_parametername ).
+    endtry.
+
+    if  i_parametervalue is bound.
+      assign currentParameter->value->*
+      to field-symbol(<parameter>).
+
+      if sy-subrc ne 0.
+        "that cannot fail as it is one field of a structure
+        "the insert has succeeded!
+        return.
+      endif.
+
+      assign i_parameterValue->*
+      to field-symbol(<input>).
+
+      if sy-subrc ne 0.
+        "inside that if-construct?
+        return.
+      endif.
+
+      <parameter> = <input>.
     endif.
   endmethod.
 

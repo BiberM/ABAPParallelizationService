@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>APS: Demo</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>LZAPS_DEMOTOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZAPS_DEMO</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>Z_APS_DEMO_FUNC_EXECUTABLE</FUNCNAME>
+     <SHORT_TEXT>APS: Demo Function Unit executable</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>I_INDEX</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>I</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>I_INDEX</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

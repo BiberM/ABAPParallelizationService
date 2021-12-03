@@ -24,8 +24,13 @@ class zcl_aps_objectselectorfactory implementation.
   method provideobjectselector.
     data(classname) = i_settings->getObjectSelectionClassname( ).
 
-    create object result
-    type (classname).
+    try.
+      create object result
+      type (classname).
+    catch cx_sy_create_object_error
+    into data(createObjectError).
+*////////// ToDo: Error handling
+    endtry.
   endmethod.
 
 endclass.
