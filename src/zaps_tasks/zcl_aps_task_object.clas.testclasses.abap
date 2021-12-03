@@ -38,7 +38,7 @@ class ltd_executable implementation.
   endmethod.
 
   method constructor.
-    super->constructor( i_parameterset = i_parameterSet ).
+    super->constructor( cast #( i_parameterSet ) ).
 
     increaseCounterBy = 1.
   endmethod.

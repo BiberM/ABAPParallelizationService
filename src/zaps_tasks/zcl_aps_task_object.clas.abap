@@ -21,19 +21,40 @@ class zcl_aps_task_object implementation.
 
     data(classnameOfExecutable) = conv classname( settings->getNameOfExecutable( ) ).
 
+    " This one is specified in the customizing.
+    " We definitely have to be sure it is of the right type
+    select single @abap_true
+    from seometarel
+    where clsname     eq @classnameOfExecutable
+      and refclsname  eq 'ZCL_APS_EXECUTABLE_OBJECT'
+      and reltype     eq '2'    " inheriting from
+    into @data(inheritsFromAPSTask).
+
+    if sy-subrc ne 0.
+*//////////// ToDo: error handling /////////////////
+      raise exception
+      type zcx_aps_task_invalid_class.
+    endif.
+
     loop at packageToBeProcessed-selections
     into data(parameterSet).
       try.
         create object executableObject
         type (classnameOfExecutable)
         exporting
-          i_parameterSet  = parameterSet.
+          i_parameterSet  = cast zif_aps_parameterset_object( parameterSet ).
 
         executableObject->start( ).
 
-      catch cx_sy_create_object_error.
+      catch cx_sy_move_cast_error
+            cx_sy_create_object_error
+      into data(instanciationError).
 *//////////// ToDo: error handling /////////////////
-        return.
+        raise exception
+        type zcx_aps_task_instanciation_err
+        exporting
+          i_previous  = instanciationError
+          i_classname = classnameOfExecutable.
       endtry.
     endloop.
   endmethod.
