@@ -91,7 +91,7 @@ class zcl_aps_batch_job implementation.
     settings = i_settings.
 
     " Prefix in combination with large numbers could exceed jobname length. So it is truncated.
-    jobName = |{ settings->getjobnameprefix( ) }{ i_chainNumber }/{ i_taskNumberInChain }|.
+    jobName = |{ settings->getjobnameprefix( ) }{ i_chainNumber }-{ i_taskNumberInChain }|.
   endmethod.
 
   method zif_aps_batch_job~getjobname.

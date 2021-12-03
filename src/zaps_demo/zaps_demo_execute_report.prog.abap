@@ -24,6 +24,7 @@ report zaps_demo_execute_report.
       maxpackagesize      = 1
       maxparalleltasks    = 5
       jobnameprefix       = 'ZAPS_DEMO_'
+      waituntilfinished   = abap_true
   ).
 
   modify zaps_paraconf
@@ -41,8 +42,10 @@ report zaps_demo_execute_report.
   catch zcx_aps_settings_unknown_app
         zcx_aps_settings_unknown_conf
         zcx_aps_task_creation_error
-        zcx_aps_job_creation_error.
-*/////////////////// ToDo: Error handling //////////////////////*
+        zcx_aps_job_creation_error
+  into data(parallelizationError).
+    message parallelizationError
+    type 'E'.
   endtry.
 
 
