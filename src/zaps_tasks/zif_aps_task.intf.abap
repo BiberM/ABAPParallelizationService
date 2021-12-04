@@ -21,6 +21,10 @@ interface zif_aps_task
         importing
           i_package       type zaps_package,
 
+      getPackage
+        returning
+          value(result)   type zaps_package,
+
       start,
 
       setStatusCreated,

@@ -99,4 +99,9 @@ class zcl_aps_task implementation.
     ).
   endmethod.
 
+
+  method zif_aps_task~getPackage.
+    result = packageToBeProcessed.
+  endmethod.
+
 endclass.

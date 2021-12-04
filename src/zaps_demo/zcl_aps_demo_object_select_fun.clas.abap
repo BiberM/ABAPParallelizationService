@@ -22,10 +22,12 @@ class zcl_aps_demo_object_select_fun implementation.
       try.
         data(singleExecutionParameters) = zcl_aps_parameterset_factory=>providefunctionunitparameters( i_settings ).
 
-        singleExecutionParameters->addimporting(
+        singleExecutionParameters->addImporting(
           i_parametername  = 'I_INDEX'
           i_parametervalue = ref #( currentLoopCounter )
         ).
+
+        singleExecutionParameters->addExporting( 'E_SQUARE' ).
 
       catch zcx_aps_unknown_executable
             zcx_aps_unknown_parameter.

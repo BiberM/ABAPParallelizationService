@@ -23,4 +23,5 @@ report zaps_batch_task_run.
     task->setStatusStarted( ).
     task->start( ).
     task->setStatusFinished( ).
+    zcl_aps_task_storage_factory=>provide( )->storeTask( task ).
   endif.

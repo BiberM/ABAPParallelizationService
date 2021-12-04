@@ -3,6 +3,8 @@ function Z_APS_DEMO_FUNC_EXECUTABLE.
 *"*"Local Interface:
 *"  IMPORTING
 *"     REFERENCE(I_INDEX) TYPE  I
+*"  EXPORTING
+*"     REFERENCE(E_SQUARE) TYPE  I
 *"----------------------------------------------------------------------
   try.
     data(randomWaitSeconds) = cl_abap_random_int=>create(
@@ -16,7 +18,11 @@ function Z_APS_DEMO_FUNC_EXECUTABLE.
 
   wait up to randomWaitSeconds seconds.
 
+  e_square = i_index * i_index.
+
   message i319(01)
-  with |This is task number { i_index }|.
+  with |{ i_index }^2 = { e_square }|.
+
+
 
 ENDFUNCTION.

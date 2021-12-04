@@ -18,9 +18,20 @@
        <TYP>I</TYP>
       </RSIMP>
      </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>E_SQUARE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>I</TYP>
+      </RSEXP>
+     </EXPORT>
      <DOCUMENTATION>
       <RSFDO>
        <PARAMETER>I_INDEX</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>E_SQUARE</PARAMETER>
        <KIND>P</KIND>
       </RSFDO>
      </DOCUMENTATION>

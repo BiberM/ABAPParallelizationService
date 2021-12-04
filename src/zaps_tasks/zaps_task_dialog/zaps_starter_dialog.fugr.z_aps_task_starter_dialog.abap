@@ -18,6 +18,7 @@ function z_aps_task_starter_dialog.
     task->setStatusStarted( ).
     task->start( ).
     task->setStatusFinished( ).
+    zcl_aps_task_storage_factory=>provide( )->storeTask( task ).
   endif.
 
 

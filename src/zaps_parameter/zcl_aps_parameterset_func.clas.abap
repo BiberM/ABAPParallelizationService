@@ -17,19 +17,49 @@ class zcl_aps_parameterset_func definition
 
   protected section.
   private section.
+    " all other parameters tables have a subset of the changing parameters structure.
+    " so, we use this one for all of them as a common structure
     data:
       settings                  type ref to zif_aps_settings,
       functionUnitParameters    type abap_func_parmbind_tab,
-      funcExportingparameters   type rsfb_exp,
-      funcImportingparameters   type rsfb_imp,
+      funcExportingparameters   type rsfb_cha,
+      funcImportingparameters   type rsfb_cha,
       funcChangingparameters    type rsfb_cha,
       funcExceptions            type rsfb_exc,
-      funcTableparameters       type rsfb_tbl.
+      funcTableparameters       type rsfb_cha.
 
     methods:
       loadFunctionUnitParams
         raising
           zcx_aps_unknown_executable,
+
+      createDataRefForParameter
+        importing
+          i_parameterTypedefinition type rscha
+          i_parmbindEntry           type ref to abap_func_parmbind
+        raising
+          zcx_aps_unknown_parameter,
+
+      createDataRefDDICReference
+        importing
+          i_parameterTypedefinition type rscha
+          i_parmbindEntry           type ref to abap_func_parmbind
+        raising
+          zcx_aps_unknown_parameter,
+
+      createDataRefObject
+        importing
+          i_parameterTypedefinition type rscha
+          i_parmbindEntry           type ref to abap_func_parmbind
+        raising
+          zcx_aps_unknown_parameter,
+
+      createDataRefInternal
+        importing
+          i_parameterTypedefinition type rscha
+          i_parmbindEntry           type ref to abap_func_parmbind
+        raising
+          zcx_aps_unknown_parameter,
 
       createDataTypeDescriptor
         importing
@@ -47,7 +77,12 @@ class zcl_aps_parameterset_func definition
         returning
           value(result)     type ref to cl_abap_datadescr
         raising
-          zcx_aps_unknown_parameter.
+          zcx_aps_unknown_parameter,
+
+      copyContentOfDataRef
+        importing
+          i_source        type ref to data
+          i_target        type ref to data.
 
 
 endclass.
@@ -206,23 +241,6 @@ class zcl_aps_parameterset_func implementation.
           exporting
             i_parametername = conv #( i_parametername ).
     endif.
-
-    try.
-      data(dataType) = createDataTypeDescriptor(
-        i_dataType        = funcExportingparameters[ parameter = i_parametername ]-dbfield
-        i_parametername   = i_parametername
-      ).
-
-      create data currentParameter->value
-      type handle dataType.
-
-    catch cx_sy_itab_line_not_found
-          cx_sy_create_data_error.
-      raise exception
-        type zcx_aps_unknown_parameter
-        exporting
-          i_parametername = conv #( i_parametername ).
-    endtry.
   endmethod.
 
   method zif_aps_parameterSet_func~addimporting.
@@ -313,7 +331,7 @@ class zcl_aps_parameterset_func implementation.
 
     try.
       data(dataType) = createDataTypeDescriptor(
-        i_dataType        = funcTableParameters[ parameter = i_parametername ]-dbstruct
+        i_dataType        = funcTableParameters[ parameter = i_parametername ]-dbfield
         i_parametername   = i_parametername
       ).
 
@@ -430,6 +448,28 @@ class zcl_aps_parameterset_func implementation.
     endtry.
 
     if  i_parametervalue is bound.
+      cl_abap_typedescr=>describe_by_data_ref(
+        exporting
+          p_data_ref           = i_parametervalue
+        receiving
+          p_descr_ref          = data(typeDescriptor)
+        exceptions
+          reference_is_initial = 1
+          others               = 2
+      ).
+
+      if sy-subrc <> 0.
+        raise exception
+          type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parametername ).
+      endif.
+
+      data(dataDescriptor) = cast cl_abap_datadescr( typeDescriptor ).
+
+      create data currentParameter
+      type handle dataDescriptor.
+
       assign currentParameter->*
       to field-symbol(<parameter>).
 
@@ -496,15 +536,20 @@ class zcl_aps_parameterset_func implementation.
 
 
   method loadFunctionUnitParams.
+    data:
+      exportingParameters type rsfb_exp,
+      importingParameters type rsfb_imp,
+      tablesParameters    type rsfb_tbl.
+
     call function 'FUNCTION_IMPORT_INTERFACE'
       exporting
         funcname                = conv rs38l_fnam( settings->getNameOfExecutable( ) )
       tables
         exception_list          = funcExceptions
-        export_parameter        = funcExportingparameters
-        import_parameter        = funcImportingparameters
+        export_parameter        = exportingParameters
+        import_parameter        = importingParameters
         changing_parameter      = funcChangingparameters
-        tables_parameter        = funcTableparameters
+        tables_parameter        = tablesParameters
       exceptions
         error_message           = 1
         function_not_found      = 2
@@ -517,6 +562,34 @@ class zcl_aps_parameterset_func implementation.
         exporting
           i_executablename = settings->getNameOfExecutable( ).
     endif.
+
+    " correction:
+    " the tables parrameters have a field dbstruct but table_of = abap_false
+    " as this is impicitely clear that this is a table of.
+    " We want to use a common structure and therefor need table_of = abap_true set explicitely.
+    funcTableParameters = value #(
+      for tableParameter in funcTableParameters
+      (
+        value rstbl(
+          base tableParameter
+          table_of = abap_true
+        )
+      )
+    ).
+
+    " all other parameters tables have a subset of the changing parameters structure.
+    " so, we use this one for all of them
+    funcExportingparameters = corresponding #(
+                                exportingParameters
+                              ).
+    funcImportingparameters = corresponding #(
+                                importingParameters
+                              ).
+    funcTableParameters = corresponding #(
+                            tablesParameters
+                            mapping
+                              dbfield = dbstruct
+                          ).
   endmethod.
 
 
@@ -542,6 +615,95 @@ class zcl_aps_parameterset_func implementation.
 
   method zif_aps_parameterset_func~getparameterstab.
     result = functionUnitParameters.
+  endmethod.
+
+
+  method createDataRefForParameter.
+    if not i_parameterTypeDefinition-dbfield is initial
+    or not i_parameterTypeDefinition-line_of is initial.
+      createDataRefDDICReference(
+        i_parameterTypeDefinition = i_parameterTypeDefinition
+        i_parmbindEntry           = i_parmbindEntry
+      ).
+    elseif not i_parameterTypeDefinition-ref_class is initial.
+      createDataRefObject(
+        i_parameterTypeDefinition = i_parameterTypeDefinition
+        i_parmbindEntry           = i_parmbindEntry
+      ).
+    else.
+      createDataRefInternal(
+        i_parameterTypeDefinition = i_parameterTypeDefinition
+        i_parmbindEntry           = i_parmbindEntry
+      ).
+    endif.
+  endmethod.
+
+
+  method createDataRefDDICReference.
+    try.
+      cl_abap_typedescr=>describe_by_name(
+        exporting
+          p_name = cond #(
+                     when not i_parameterTypeDefinition-dbfield is initial
+                       then i_parameterTypeDefinition-dbfield
+                     when not i_parameterTypeDefinition-line_of is initial
+                       then i_parameterTypeDefinition-line_of
+                     else space
+                   )
+        receiving
+          p_descr_ref = data(datatypeDescriptor)
+        exceptions
+          type_not_found  = 1
+          others          = 2
+      ).
+
+      if sy-subrc ne 0.
+        raise exception
+          type zcx_aps_unknown_parameter
+          exporting
+            i_parametername = conv #( i_parameterTypeDefinition-parameter ).
+      endif.
+
+      data(dataDescriptor) = cast cl_abap_datadescr( dataTypeDescriptor ).
+
+      create data i_parmbindEntry->value
+      type handle dataDescriptor.
+
+    catch cx_sy_itab_line_not_found
+          cx_sy_move_cast_error
+          cx_sy_create_data_error.
+      raise exception
+        type zcx_aps_unknown_parameter
+        exporting
+          i_parametername = conv #( i_parameterTypeDefinition-parameter ).
+    endtry.
+  endmethod.
+
+
+  method createDataRefObject.
+*////////// ToDo: ///////////////////////////////
+    " that's a hard one. object references are global in memory and if you copy them
+    " they don't get freed as long as there is still a reference somewhere
+    " so here we don't need to create a new data area and copy the contents.
+    " Copying the reference is enough.
+  endmethod.
+
+
+  method createDataRefInternal.
+    try.
+      create data i_parmbindEntry->value
+      type (i_parameterTypeDefinition-typ).
+    catch cx_sy_create_data_error.
+      raise exception
+        type zcx_aps_unknown_parameter
+        exporting
+          i_parametername = conv #( i_parameterTypeDefinition-parameter ).
+    endtry.
+  endmethod.
+
+
+  method copyContentOfDataRef.
+
   endmethod.
 
 endclass.

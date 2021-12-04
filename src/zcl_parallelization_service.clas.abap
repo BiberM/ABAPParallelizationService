@@ -8,6 +8,8 @@ class zcl_parallelization_service definition
 
   protected section.
   private section.
+    data:
+      parameterSetsAfterExecution     type zaps_parameter_set_list.
 endclass.
 
 
@@ -26,7 +28,29 @@ class zcl_parallelization_service implementation.
 
     data(packages) = zcl_aps_object_packetizer_fact=>provide( settings )->packetize( objects ).
 
-    zcl_aps_task_starter_factory=>provide( settings )->start( packages ).
+    parameterSetsAfterExecution = zcl_aps_task_starter_factory=>provide( settings )->start( packages ).
+  endmethod.
+
+
+  method zif_parallelization_service~getObjectParameterSets.
+    loop at parameterSetsAfterExecution
+    into data(parameterSet).
+      if parameterSet is instance of zif_aps_parameterset_object.
+        insert cast #( parameterSet )
+        into table result.
+      endif.
+    endloop.
+  endmethod.
+
+
+  method zif_parallelization_service~getFuncParameterSets.
+    loop at parameterSetsAfterExecution
+    into data(parameterSet).
+      if parameterSet is instance of zif_aps_parameterset_func.
+        insert cast #( parameterSet )
+        into table result.
+      endif.
+    endloop.
   endmethod.
 
 endclass.

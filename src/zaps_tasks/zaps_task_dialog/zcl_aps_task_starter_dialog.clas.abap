@@ -67,6 +67,22 @@ class zcl_aps_task_starter_dialog implementation.
     endloop.
 
     doWaitUntilFinished( ).
+
+    " loading the tasks does delete them from the temporary table
+    " that's why it is always done.
+    data(taskList) = zcl_aps_task_storage_factory=>provide( )->loadalltasks(
+                                                                 i_appid    = settings->getAppId( )
+                                                                 i_configid = settings->getConfigId( )
+                                                               ).
+
+    " receiving the results is only useful if we waited for completion
+    if settings->shouldWaitUntilFinished( ) = abap_true.
+      loop at taskList
+      into data(taskAfterExecution).
+        insert lines of taskAfterExecution->getPackage( )-selections
+        into table result.
+      endloop.
+    endif.
   endmethod.
 
   method callback.

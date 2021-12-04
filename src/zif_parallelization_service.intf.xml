@@ -10,6 +10,26 @@
     <STATE>1</STATE>
     <UNICODE>X</UNICODE>
    </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_PARALLELIZATION_SERVICE</CLSNAME>
+     <CMPNAME>GETFUNCPARAMETERSETS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Function Unit parameter sets after execution</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_PARALLELIZATION_SERVICE</CLSNAME>
+     <CMPNAME>GETOBJECTPARAMETERSETS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Object parameter sets after execution</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_PARALLELIZATION_SERVICE</CLSNAME>
+     <CMPNAME>START</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Starts a parallel execution of App with Config</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>

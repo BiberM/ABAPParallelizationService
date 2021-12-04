@@ -23,7 +23,7 @@ endclass.
 
 class zcl_aps_task_storage_db implementation.
 
-  method zif_aps_task_storage~loadtask.
+  method zif_aps_task_storage~loadSingleTask.
     data:
       serializedTask    type xstring,
       storageLine       type zaps_taskstore,
@@ -164,6 +164,26 @@ class zcl_aps_task_storage_db implementation.
       return.
     endif.
 
+  endmethod.
+
+
+  method zif_aps_task_storage~loadAllTasks.
+    select distinct taskId
+    from zaps_taskstore
+    where relid     = 'TS'
+      and appId     = @i_appId
+      and configId  = @i_configId
+    into table @data(tasks).
+
+    loop at tasks
+    into data(task).
+      insert zif_aps_task_storage~loadSingleTask(
+               i_appid    = i_appId
+               i_configid = i_configId
+               i_taskid   = task-taskId
+             )
+      into table result.
+    endloop.
   endmethod.
 
 endclass.

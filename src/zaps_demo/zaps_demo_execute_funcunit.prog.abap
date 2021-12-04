@@ -39,10 +39,25 @@ report zaps_demo_execute_funcunit.
       i_appid          = 'APS_DEMO_FUNCUNIT'
       i_configid       = 'DEMO_FUNCUNIT_5_1_BATCH'
     ).
+
+    data(parameterSets) = go_parallelization->zif_parallelization_service~getFuncParameterSets( ).
+
+    loop at parameterSets
+    into data(parameterSet).
+      data(square) = parameterSet->getExportingValue( 'E_SQUARE' ).
+
+      assign square->*
+      to field-symbol(<square>).
+
+      if sy-subrc = 0.
+        cl_demo_output=>display_text( |e_square = { <square> }| ).
+      endif.
+    endloop.
   catch zcx_aps_settings_unknown_app
         zcx_aps_settings_unknown_conf
         zcx_aps_task_creation_error
         zcx_aps_job_creation_error
+        zcx_aps_unknown_parameter
   into data(parallelizationError).
     message parallelizationError
     type 'E'.

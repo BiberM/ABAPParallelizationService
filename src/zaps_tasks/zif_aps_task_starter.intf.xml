@@ -10,6 +10,14 @@
     <STATE>1</STATE>
     <UNICODE>X</UNICODE>
    </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_TASK_STARTER</CLSNAME>
+     <CMPNAME>START</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Starts a parallel execution</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>
