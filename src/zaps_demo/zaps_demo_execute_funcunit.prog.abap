@@ -42,6 +42,8 @@ report zaps_demo_execute_funcunit.
 
     data(parameterSets) = go_parallelization->zif_parallelization_service~getFuncParameterSets( ).
 
+    data(outputText) = value string( ).
+
     loop at parameterSets
     into data(parameterSet).
       data(square) = parameterSet->getExportingValue( 'E_SQUARE' ).
@@ -50,9 +52,12 @@ report zaps_demo_execute_funcunit.
       to field-symbol(<square>).
 
       if sy-subrc = 0.
-        cl_demo_output=>display_text( |e_square = { <square> }| ).
+        outputText = outputText && |\ne_square = { <square> }|.
       endif.
     endloop.
+
+    cl_demo_output=>display_text( outputText ).
+
   catch zcx_aps_settings_unknown_app
         zcx_aps_settings_unknown_conf
         zcx_aps_task_creation_error

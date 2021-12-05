@@ -7,7 +7,7 @@ function z_aps_task_starter_dialog.
 *"     VALUE(I_TASKID) TYPE  ZAPS_TASKID
 *"----------------------------------------------------------------------
 
-  data(task) = zcl_aps_task_storage_factory=>provide( )->loadTask(
+  data(task) = zcl_aps_task_storage_factory=>provide( )->loadSingleTask(
                  i_appid    = i_appId
                  i_configid = i_configId
                  i_taskid   = i_taskId

@@ -12,7 +12,7 @@ report zaps_batch_task_run.
 
 */////// ToDo: Check for abort request ///////////////
 
-  data(task) = zcl_aps_task_storage_factory=>provide( )->loadTask(
+  data(task) = zcl_aps_task_storage_factory=>provide( )->loadSingleTask(
                  i_appid    = p_ap
                  i_configid = p_co
                  i_taskid   = p_ta
