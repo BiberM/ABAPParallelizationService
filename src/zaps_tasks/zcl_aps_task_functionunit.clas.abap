@@ -35,6 +35,11 @@ class zcl_aps_task_functionunit implementation.
         call function functionUnitToBeCalled
         parameter-table functionUnitParameterTable
         exception-table functionUnitExceptionTable.
+
+        if sy-subrc <> 0.
+          raise exception
+          type zcx_aps_executable_call_error.
+        endif.
       catch cx_sy_dyn_call_illegal_func
             cx_sy_dyn_call_illegal_type
             cx_sy_dyn_call_param_missing

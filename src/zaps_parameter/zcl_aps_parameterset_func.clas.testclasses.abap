@@ -13,7 +13,7 @@ class ltcl_parameterset_func definition final for testing
       cut           type ref to zcl_aps_parameterset_func.
 
     methods:
-      setup,
+      setup raising cx_static_check,
 
       importing_in for testing raising cx_static_check,
       importing_invalid for testing raising cx_static_check,
@@ -172,6 +172,10 @@ class ltcl_parameterset_func implementation.
         call function funcnameAsParameterValue
         parameter-table cut->functionunitparameters
         exception-table funcUnitExceptionsTab.
+
+        if sy-subrc <> 0.
+          cl_abap_unit_assert=>fail( 'Func Unit Exception occured' ).
+        endif.
       catch cx_sy_dyn_call_illegal_func
             cx_sy_dyn_call_illegal_type
             cx_sy_dyn_call_param_missing

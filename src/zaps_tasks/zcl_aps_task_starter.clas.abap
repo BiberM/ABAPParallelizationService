@@ -48,6 +48,7 @@ class zcl_aps_task_starter implementation.
     catch zcx_aps_task_invalid_class
           zcx_aps_task_instanciation_err
           zcx_aps_task_unknown_exec_type
+          zcx_aps_task_status
     into data(detailedError).
       raise exception
       type zcx_aps_task_creation_error

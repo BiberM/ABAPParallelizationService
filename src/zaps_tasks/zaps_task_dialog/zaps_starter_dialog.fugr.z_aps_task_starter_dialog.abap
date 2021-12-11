@@ -24,6 +24,7 @@ function z_aps_task_starter_dialog.
   catch zcx_aps_executable_call_error
         zcx_aps_task_storage
         zcx_aps_task_serialization
+        zcx_aps_task_status
   into data(callError).
     data(previousError) = callError->previous.
     while previousError is bound.
