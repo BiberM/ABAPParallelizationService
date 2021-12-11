@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZAPS_TASK_STORAGE</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>APS: Task Storage Messages</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK_STORAGE</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>Error storing or loading the task.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK_STORAGE</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>Error during serialization or deserialization.</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK_STORAGE</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Error setting task status.</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>

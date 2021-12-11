@@ -16,7 +16,9 @@ class zcl_aps_task_storage_db definition
           i_appid    type zaps_appid
           i_configid type zaps_configid
           i_taskid   type zaps_taskid
-          i_status   type zaps_task_status.
+          i_status   type zaps_task_status
+        raising
+          zcx_aps_task_status.
 endclass.
 
 
@@ -41,8 +43,8 @@ class zcl_aps_task_storage_db implementation.
     id taskStorageKey.
 
     if sy-subrc ne 0.
-*///////////////// ToDo: Exception /////////////////////*
-      return.
+      raise exception
+      type zcx_aps_task_storage.
     endif.
 
     try.
@@ -51,8 +53,8 @@ class zcl_aps_task_storage_db implementation.
       result taskObject = result.
     catch cx_transformation_error
     into data(transformationError).
-*///////////////// ToDo: Exception /////////////////////*
-      return.
+      raise exception
+      type zcx_aps_task_serialization.
     endtry.
 
     delete from zaps_taskstore
@@ -80,8 +82,8 @@ class zcl_aps_task_storage_db implementation.
       source taskObject = i_task
       result xml data(serializedTask).
     catch cx_transformation_error.
-*///////////////// ToDo: Exception /////////////////////*
-      return.
+      raise exception
+      type zcx_aps_task_serialization.
     endtry.
 
     data(metaInfo) = value zaps_taskstore(
@@ -101,8 +103,8 @@ class zcl_aps_task_storage_db implementation.
     id taskStorageKey.
 
     if sy-subrc ne 0.
-*///////////////// ToDo: Exception /////////////////////*
-      return.
+      raise exception
+      type zcx_aps_task_storage.
     endif.
   endmethod.
 
@@ -160,8 +162,8 @@ class zcl_aps_task_storage_db implementation.
     from @dataset.
 
     if sy-subrc <> 0.
-*//////////// ToDo: error handling /////////////////////////////*
-      return.
+      raise exception
+      type zcx_aps_task_status.
     endif.
 
   endmethod.

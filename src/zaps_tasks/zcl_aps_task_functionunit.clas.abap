@@ -38,8 +38,12 @@ class zcl_aps_task_functionunit implementation.
       catch cx_sy_dyn_call_illegal_func
             cx_sy_dyn_call_illegal_type
             cx_sy_dyn_call_param_missing
-            cx_sy_dyn_call_param_not_found.
-*/////////// ToDo: error handling ////////////////////////
+            cx_sy_dyn_call_param_not_found
+      into data(callError).
+        raise exception
+        type zcx_aps_executable_call_error
+        exporting
+          i_previous  = callError.
       endtry.
     endloop.
   endmethod.

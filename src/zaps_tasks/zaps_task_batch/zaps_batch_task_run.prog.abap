@@ -10,18 +10,38 @@ report zaps_batch_task_run.
     p_co      type zaps_configId obligatory,
     p_ta      type zaps_taskId obligatory.
 
-*/////// ToDo: Check for abort request ///////////////
+  try.
+    data(task) = zcl_aps_task_storage_factory=>provide( )->loadSingleTask(
+                   i_appid    = p_ap
+                   i_configid = p_co
+                   i_taskid   = p_ta
+                 ).
 
-  data(task) = zcl_aps_task_storage_factory=>provide( )->loadSingleTask(
-                 i_appid    = p_ap
-                 i_configid = p_co
-                 i_taskid   = p_ta
-               ).
 
+    if task is bound.
+      task->setStatusStarted( ).
+      task->start( ).
+      task->setStatusFinished( ).
+      zcl_aps_task_storage_factory=>provide( )->storeTask( task ).
+    endif.
+  catch zcx_aps_executable_call_error
+  into data(callError).
+    data(previousError) = callError->previous.
+    while previousError is bound.
+      if  previousError is instance of if_t100_message.
+        message callError->previous
+        type 'I'
+        display like 'E'.
+      endif.
 
-  if task is bound.
-    task->setStatusStarted( ).
-    task->start( ).
-    task->setStatusFinished( ).
-    zcl_aps_task_storage_factory=>provide( )->storeTask( task ).
-  endif.
+      if previousError->previous is bound.
+        previousError = previousError->previous.
+      endif.
+    endwhile.
+
+    if callError is instance of if_t100_message.
+      message callError
+      type 'I'
+      display like 'E'.
+    endif.
+  endtry.

@@ -44,7 +44,17 @@ class zcl_aps_task_starter_dialog implementation.
 
       data(task) = createtask( package ).
 
-      zcl_aps_task_storage_factory=>provide( )->storetask( task ).
+      try.
+        zcl_aps_task_storage_factory=>provide( )->storetask( task ).
+      catch zcx_aps_task_storage
+            zcx_aps_task_serialization
+      into data(storageError).
+        message storageError
+        type 'I'
+        display like 'E'.
+
+        continue.
+      endtry.
 
       data(funcUnitTaskId) = |{ settings->getJobNamePrefix( ) }-{ taskNumber }|.
 
@@ -96,10 +106,20 @@ class zcl_aps_task_starter_dialog implementation.
 
     " loading the tasks does delete them from the temporary table
     " that's why it is always done.
-    data(taskList) = zcl_aps_task_storage_factory=>provide( )->loadalltasks(
-                                                                 i_appid    = settings->getAppId( )
-                                                                 i_configid = settings->getConfigId( )
-                                                               ).
+    try.
+      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks(
+                                                                   i_appid    = settings->getappid( )
+                                                                   i_configid = settings->getconfigid( )
+                                                                 ).
+    catch zcx_aps_task_storage
+          zcx_aps_task_serialization
+    into data(storageErrorLoad).
+      message storageErrorLoad
+      type 'I'
+      display like 'E'.
+
+      taskList = value zaps_task_chain( ).
+    endtry.
 
     " receiving the results is only useful if we waited for completion
     if settings->shouldWaitUntilFinished( ) = abap_true.
@@ -127,7 +147,11 @@ class zcl_aps_task_starter_dialog implementation.
       others                = 4.
 
     if sy-subrc <> 0.
-*//////////////// ToDo: Where to log? we are asynchronous ... //////////////////*
+      if not errorMessage is initial.
+        message errorMessage
+        type 'I'
+        display like 'E'.
+      endif.
     endif.
   endmethod.
 

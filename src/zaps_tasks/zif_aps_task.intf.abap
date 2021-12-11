@@ -25,14 +25,24 @@ interface zif_aps_task
         returning
           value(result)   type zaps_package,
 
-      start,
+      start
+        raising
+          zcx_aps_executable_call_error,
 
-      setStatusCreated,
+      setstatuscreated
+        raising
+          zcx_aps_task_status,
 
-      setStatusStarted,
+      setstatusstarted
+        raising
+          zcx_aps_task_status,
 
-      setStatusFinished,
+      setstatusfinished
+        raising
+          zcx_aps_task_status,
 
-      setStatusAborted.
+      setstatusaborted
+        raising
+          zcx_aps_task_status.
 
 endinterface.

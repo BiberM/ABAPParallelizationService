@@ -461,7 +461,6 @@ class zcl_aps_parameterset_func implementation.
 
 
   method createDataRefObject.
-*////////// ToDo: ///////////////////////////////
     " that's a hard one. object references are global in memory and if you copy them
     " they don't get freed as long as there is still a reference somewhere
     " so here we don't need to create a new data area and copy the contents.

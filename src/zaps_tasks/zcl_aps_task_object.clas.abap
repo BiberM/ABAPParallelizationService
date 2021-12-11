@@ -31,9 +31,12 @@ class zcl_aps_task_object implementation.
     into @data(inheritsFromAPSTask).
 
     if sy-subrc ne 0.
-*//////////// ToDo: error handling /////////////////
+      data(errorInvalidClass) = new zcx_aps_task_invalid_class( ).
+
       raise exception
-      type zcx_aps_task_invalid_class.
+      type zcx_aps_executable_call_error
+      exporting
+        i_previous  = errorInvalidClass.
     endif.
 
     loop at packageToBeProcessed-selections
@@ -48,13 +51,16 @@ class zcl_aps_task_object implementation.
 
       catch cx_sy_move_cast_error
             cx_sy_create_object_error
-      into data(instanciationError).
-*//////////// ToDo: error handling /////////////////
+      into data(previousInstanciationError).
+        data(instanciationError) = new zcx_aps_task_instanciation_err(
+          i_previous  = previousInstanciationError
+          i_classname = classnameOfExecutable
+        ).
+
         raise exception
-        type zcx_aps_task_instanciation_err
-        exporting
-          i_previous  = instanciationError
-          i_classname = classnameOfExecutable.
+      type zcx_aps_executable_call_error
+      exporting
+        i_previous  = instanciationError.
       endtry.
     endloop.
   endmethod.

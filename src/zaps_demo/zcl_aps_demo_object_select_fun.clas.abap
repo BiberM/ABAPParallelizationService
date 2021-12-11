@@ -19,22 +19,14 @@ class zcl_aps_demo_object_select_fun implementation.
     do 10 times.
       data(currentLoopCounter) = sy-index.
 
-      try.
-        data(singleExecutionParameters) = zcl_aps_parameterset_factory=>providefunctionunitparameters( i_settings ).
+      data(singleExecutionParameters) = zcl_aps_parameterset_factory=>providefunctionunitparameters( i_settings ).
 
-        singleExecutionParameters->addImporting(
-          i_parametername  = 'I_INDEX'
-          i_parametervalue = ref #( currentLoopCounter )
-        ).
+      singleExecutionParameters->addImporting(
+        i_parametername  = 'I_INDEX'
+        i_parametervalue = ref #( currentLoopCounter )
+      ).
 
-        singleExecutionParameters->addExporting( 'E_SQUARE' ).
-
-      catch zcx_aps_unknown_executable
-            zcx_aps_unknown_parameter.
-*////////////// ToDo: proper error handling ////////////////////////*
-        clear result.
-        return.
-      endtry.
+      singleExecutionParameters->addExporting( 'E_SQUARE' ).
 
       insert singleExecutionParameters
       into table result.

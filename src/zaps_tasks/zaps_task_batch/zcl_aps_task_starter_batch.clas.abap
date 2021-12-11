@@ -95,10 +95,20 @@ class zcl_aps_task_starter_batch implementation.
 
     " loading the tasks does delete them from the temporary table
     " that's why it is always done.
-    data(taskList) = zcl_aps_task_storage_factory=>provide( )->loadalltasks(
-                                                                 i_appid    = settings->getAppId( )
-                                                                 i_configid = settings->getConfigId( )
-                                                               ).
+    try.
+      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks(
+                                                                   i_appid    = settings->getappid( )
+                                                                   i_configid = settings->getconfigid( )
+                                                                 ).
+    catch zcx_aps_task_storage
+          zcx_aps_task_serialization
+    into data(storageErrorLoad).
+      message storageErrorLoad
+      type 'I'
+      display like 'E'.
+
+      taskList = value zaps_task_chain( ).
+    endtry.
 
     " receiving the results is only useful if we waited for completion
     if settings->shouldWaitUntilFinished( ) = abap_true.
@@ -178,6 +188,8 @@ class zcl_aps_task_starter_batch implementation.
     catch zcx_aps_task_job_creation
           zcx_aps_task_job_submit
           zcx_aps_task_job_release
+          zcx_aps_task_storage
+          zcx_aps_task_serialization
     into data(detailledJobError).
       raise exception
       type zcx_aps_job_creation_error

@@ -7,19 +7,43 @@ function z_aps_task_starter_dialog.
 *"     VALUE(I_TASKID) TYPE  ZAPS_TASKID
 *"----------------------------------------------------------------------
 
-  data(task) = zcl_aps_task_storage_factory=>provide( )->loadSingleTask(
-                 i_appid    = i_appId
-                 i_configid = i_configId
-                 i_taskid   = i_taskId
-               ).
+  try.
+    data(task) = zcl_aps_task_storage_factory=>provide( )->loadSingleTask(
+                   i_appid    = i_appId
+                   i_configid = i_configId
+                   i_taskid   = i_taskId
+                 ).
 
 
-  if task is bound.
-    task->setStatusStarted( ).
-    task->start( ).
-    task->setStatusFinished( ).
-    zcl_aps_task_storage_factory=>provide( )->storeTask( task ).
-  endif.
+    if task is bound.
+      task->setStatusStarted( ).
+      task->start( ).
+      task->setStatusFinished( ).
+      zcl_aps_task_storage_factory=>provide( )->storeTask( task ).
+    endif.
+  catch zcx_aps_executable_call_error
+        zcx_aps_task_storage
+        zcx_aps_task_serialization
+  into data(callError).
+    data(previousError) = callError->previous.
+    while previousError is bound.
+      if  previousError is instance of if_t100_message.
+        message callError->previous
+        type 'I'
+        display like 'E'.
+      endif.
+
+      if previousError->previous is bound.
+        previousError = previousError->previous.
+      endif.
+    endwhile.
+
+    if callError is instance of if_t100_message.
+      message callError
+      type 'I'
+      display like 'E'.
+    endif.
+  endtry.
 
 
 ENDFUNCTION.
