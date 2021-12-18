@@ -8,6 +8,7 @@ This project tries to suit those with a generic approach in order to give every 
 
 ## Capabilities
 Executables supported: function unit, report, method
+
 Parallelization technique: dialog task, batch task
 
 ## Release compatibility
