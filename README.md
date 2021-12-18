@@ -10,6 +10,20 @@ This project tries to suit those with a generic approach in order to give every 
 Executables supported: function unit, report, method
 Parallelization technique: dialog task, batch task
 
+## Release compatibility
+The design has on Premise in mind. Whether this could work in BTP has not yet been discussed.
+
+| on Prem release SAP_BASIS | status |
+|---------------------------|:------:|
+| 740                       | unclear |
+| 750                       | should work |
+| 751                       | should work |
+| 752                       | should work |
+| 753                       | should work |
+| 754                       | developed on |
+| 755                       | should work |
+| 756                       | should work |
+
 ## Design and glossary
 The caller must supply the following information:
 1.	WHAT is to be executed? (type, name) &rarr; this is called ***Application***
