@@ -42,6 +42,13 @@ This is used for batch jobs to be started after creation.
 ## Demo Reports
 The development package ***ZAPS_DEMO*** contains demo reports that show how to use the ABAP Parallelization Services in different situations.
 
+| Demo Report Name | demoed functionality |
+|------------------|----------------------|
+| zaps_demo_execute_funcunit | Execute a function unit with batch jobs and receive results |
+| zaps_demo_execute_func_dia | Execute a function unit with aRFC and receive results |
+| zaps_demo_execute_report | Execute a report with batch jobs (no results possible) |
+| zaps_demo_execute_object | Execute a method with batch jobs |
+
 ## Disclaimer
 The current state has never been used in real world scenarios. All demo reports work as expected and the unit test are running fine.
 
