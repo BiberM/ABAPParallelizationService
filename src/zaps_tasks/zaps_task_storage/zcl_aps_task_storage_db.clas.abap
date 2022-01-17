@@ -13,8 +13,7 @@ class zcl_aps_task_storage_db definition
     methods:
       setTaskStatus
         importing
-          i_appid    type zaps_appid
-          i_configid type zaps_configid
+          i_runId    type zaps_run_id
           i_taskid   type zaps_taskid
           i_status   type zaps_task_status
         raising
@@ -32,8 +31,7 @@ class zcl_aps_task_storage_db implementation.
       taskStorageKeyString  type c length 132.
 
     data(taskStorageKey) = value zaps_task_storage_key(
-                             appid    = i_appId
-                             configid = i_configId
+                             runid    = i_runId
                              taskid   = i_taskId
                            ).
 
@@ -59,8 +57,7 @@ class zcl_aps_task_storage_db implementation.
 
     delete from zaps_taskstore
     where relid     = 'TS'
-      and appid     = @i_appId
-      and configid  = @i_configId
+      and runid     = @i_runId
       and taskid    = @i_taskId.
 
     if sy-subrc ne 0.
@@ -92,8 +89,7 @@ class zcl_aps_task_storage_db implementation.
     ).
 
     data(taskStorageKey) = value zaps_task_storage_key(
-                             appid    = i_task->getappid( )
-                             configid = i_task->getconfigid( )
+                             runid    = i_task->getRunId( )
                              taskid   = i_task->gettaskid( )
                            ).
 
@@ -111,8 +107,7 @@ class zcl_aps_task_storage_db implementation.
 
   method zif_aps_task_storage~settaskstatuscreated.
     setTaskStatus(
-      i_appid    = i_appid
-      i_configid = i_configid
+      i_runId    = i_runId
       i_taskid   = i_taskid
       i_status   = 'C'
     ).
@@ -121,8 +116,7 @@ class zcl_aps_task_storage_db implementation.
 
   method zif_aps_task_storage~settaskstatusfinished.
     setTaskStatus(
-      i_appid    = i_appid
-      i_configid = i_configid
+      i_runId    = i_runId
       i_taskid   = i_taskid
       i_status   = 'F'
     ).
@@ -131,8 +125,7 @@ class zcl_aps_task_storage_db implementation.
 
   method zif_aps_task_storage~setTaskStatusStarted.
     setTaskStatus(
-      i_appid    = i_appid
-      i_configid = i_configid
+      i_runId    = i_runId
       i_taskid   = i_taskid
       i_status   = 'S'
     ).
@@ -141,8 +134,7 @@ class zcl_aps_task_storage_db implementation.
 
   method zif_aps_task_storage~settaskstatusaborted.
     setTaskStatus(
-      i_appid    = i_appid
-      i_configid = i_configid
+      i_runId    = i_runId
       i_taskid   = i_taskid
       i_status   = 'A'
     ).
@@ -152,8 +144,7 @@ class zcl_aps_task_storage_db implementation.
   method setTaskStatus.
 
     data(dataset) = value zaps_taskstatus(
-      appid    = i_appId
-      configid = i_configId
+      runid    = i_runId
       taskid   = i_taskId
       status   = i_status
     ).
@@ -173,15 +164,13 @@ class zcl_aps_task_storage_db implementation.
     select distinct taskId
     from zaps_taskstore
     where relid     = 'TS'
-      and appId     = @i_appId
-      and configId  = @i_configId
+      and runId     = @i_runId
     into table @data(tasks).
 
     loop at tasks
     into data(task).
       insert zif_aps_task_storage~loadSingleTask(
-               i_appid    = i_appId
-               i_configid = i_configId
+               i_runId    = i_runId
                i_taskid   = task-taskId
              )
       into table result.

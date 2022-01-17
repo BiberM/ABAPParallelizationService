@@ -13,6 +13,10 @@ interface zif_aps_task
         returning
           value(result)   type zaps_configid,
 
+      getRunId
+        returning
+          value(result)   type zaps_run_id,
+
       getTaskId
         returning
           value(result)   type zaps_taskid,

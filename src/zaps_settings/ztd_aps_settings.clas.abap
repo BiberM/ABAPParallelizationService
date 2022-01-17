@@ -31,7 +31,8 @@ class ztd_aps_settings definition
   private section.
     data:
       appDefinition                 type zaps_paraapp,
-      parallelizationConfiguration  type zaps_paraconf.
+      parallelizationConfiguration  type zaps_paraconf,
+      runInfo                       type zaps_runs.
 endclass.
 
 
@@ -105,6 +106,31 @@ class ztd_aps_settings implementation.
 
   method zif_aps_settings~shouldwaituntilfinished.
     result = parallelizationConfiguration-waituntilfinished.
+  endmethod.
+
+
+  method zif_aps_settings~getrunid.
+    result = runInfo-runid.
+  endmethod.
+
+
+  method zif_aps_settings~setstatusaborted.
+    runInfo-status = zif_aps_settings~runstatusaborted.
+  endmethod.
+
+
+  method zif_aps_settings~setstatuscompleted.
+    runInfo-status = zif_aps_settings~runstatuscompleted.
+  endmethod.
+
+
+  method zif_aps_settings~setstatusrunning.
+    runInfo-status = zif_aps_settings~runstatusrunning.
+  endmethod.
+
+
+  method zif_aps_settings~setstatusstarted.
+    runInfo-status = zif_aps_settings~runstatusstarted.
   endmethod.
 
 endclass.

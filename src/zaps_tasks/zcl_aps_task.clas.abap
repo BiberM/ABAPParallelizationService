@@ -66,8 +66,7 @@ class zcl_aps_task implementation.
 
   method zif_aps_task~setStatusCreated.
     zcl_aps_task_storage_factory=>provide( )->settaskstatuscreated(
-      i_appid    = settings->getAppId( )
-      i_configid = settings->getConfigId( )
+      i_runId    = settings->getRunId( )
       i_taskid   = taskId
     ).
   endmethod.
@@ -75,8 +74,7 @@ class zcl_aps_task implementation.
 
   method zif_aps_task~setStatusFinished.
     zcl_aps_task_storage_factory=>provide( )->settaskstatusFinished(
-      i_appid    = settings->getAppId( )
-      i_configid = settings->getConfigId( )
+      i_runId    = settings->getRunId( )
       i_taskid   = taskId
     ).
   endmethod.
@@ -84,8 +82,7 @@ class zcl_aps_task implementation.
 
   method zif_aps_task~setStatusStarted.
     zcl_aps_task_storage_factory=>provide( )->settaskstatusStarted(
-      i_appid    = settings->getAppId( )
-      i_configid = settings->getConfigId( )
+      i_runId    = settings->getRunId( )
       i_taskid   = taskId
     ).
   endmethod.
@@ -93,8 +90,7 @@ class zcl_aps_task implementation.
 
   method zif_aps_task~setStatusAborted.
     zcl_aps_task_storage_factory=>provide( )->settaskstatusAborted(
-      i_appid    = settings->getAppId( )
-      i_configid = settings->getConfigId( )
+      i_runId    = settings->getRunId( )
       i_taskid   = taskId
     ).
   endmethod.
@@ -102,6 +98,11 @@ class zcl_aps_task implementation.
 
   method zif_aps_task~getPackage.
     result = packageToBeProcessed.
+  endmethod.
+
+
+  method zif_aps_task~getRunId.
+    result = settings->getRunId( ).
   endmethod.
 
 endclass.

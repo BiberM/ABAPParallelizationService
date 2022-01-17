@@ -20,6 +20,12 @@
      <MSGNR>002</MSGNR>
      <TEXT>configuration ID &amp;1 is unknown for application &amp;2. Check zaps_paraconf.</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_SETTINGS</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Run ID &amp;1 is unknown.</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

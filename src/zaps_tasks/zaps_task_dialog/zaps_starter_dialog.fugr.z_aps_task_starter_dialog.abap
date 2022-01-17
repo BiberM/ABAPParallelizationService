@@ -2,15 +2,13 @@ function z_aps_task_starter_dialog.
 *"----------------------------------------------------------------------
 *"*"Local Interface:
 *"  IMPORTING
-*"     VALUE(I_APPID) TYPE  ZAPS_APPID
-*"     VALUE(I_CONFIGID) TYPE  ZAPS_CONFIGID
+*"     VALUE(I_RUNID) TYPE  ZAPS_RUN_ID
 *"     VALUE(I_TASKID) TYPE  ZAPS_TASKID
 *"----------------------------------------------------------------------
 
   try.
     data(task) = zcl_aps_task_storage_factory=>provide( )->loadSingleTask(
-                   i_appid    = i_appId
-                   i_configid = i_configId
+                   i_runId    = i_runId
                    i_taskid   = i_taskId
                  ).
 

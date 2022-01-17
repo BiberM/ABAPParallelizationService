@@ -38,12 +38,9 @@ endclass.
 class zcl_aps_batch_job implementation.
   method zif_aps_batch_job~addstep.
     data(selectionScreenData) = value rsparams_tt(
-                                  ( selname = 'P_AP'
+                                  ( selname = 'P_RUNID'
                                     kind    = 'P'
-                                    low     = task->getAppId( ) )
-                                  ( selname = 'P_CO'
-                                    kind    = 'P'
-                                    low     = task->getConfigId( ) )
+                                    low     = task->getRunId( ) )
                                   ( selname = 'P_TA'
                                     kind    = 'P'
                                     low     = task->getTaskId( ) )

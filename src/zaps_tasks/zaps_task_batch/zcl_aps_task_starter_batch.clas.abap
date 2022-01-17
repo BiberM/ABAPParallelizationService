@@ -91,15 +91,14 @@ class zcl_aps_task_starter_batch implementation.
         i_previous  = detailledError.
     endif.
 
+    settings->setStatusRunning( ).
+
     doWaitUntilFinished( jobChains ).
 
     " loading the tasks does delete them from the temporary table
     " that's why it is always done.
     try.
-      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks(
-                                                                   i_appid    = settings->getappid( )
-                                                                   i_configid = settings->getconfigid( )
-                                                                 ).
+      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks( settings->getRunId( ) ).
     catch zcx_aps_task_storage
           zcx_aps_task_serialization
     into data(storageErrorLoad).

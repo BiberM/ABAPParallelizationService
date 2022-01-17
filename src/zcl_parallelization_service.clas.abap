@@ -17,7 +17,7 @@ endclass.
 class zcl_parallelization_service implementation.
   method zif_parallelization_service~start.
     try.
-      data(settings) = zcl_aps_settings_factory=>provide(
+      data(settings) = zcl_aps_settings_factory=>provideNew(
                          i_appid    = i_appId
                          i_configid = i_configId
                        ).

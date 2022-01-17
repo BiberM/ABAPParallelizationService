@@ -1,32 +1,45 @@
 class zcl_aps_settings definition
   public
   final
-  create public.
+  create private
+  global friends zcl_aps_settings_factory.
 
   public section.
     interfaces zif_aps_settings.
-
-    methods:
-      constructor
-        importing
-          i_appId       type zaps_appid
-          i_configId    type zaps_configid
-        raising
-          zcx_aps_settings_unknown_app
-          zcx_aps_settings_unknown_conf.
 
   protected section.
   private section.
     data:
       appDefinition                 type zaps_paraapp,
-      parallelizationConfiguration  type zaps_paraconf.
+      parallelizationConfiguration  type zaps_paraconf,
+      runInfo                       type zaps_runs.
+
+    methods:
+      create
+        importing
+          i_appId       type zaps_appid
+          i_configId    type zaps_configid
+        raising
+          zcx_aps_settings_unknown_app
+          zcx_aps_settings_unknown_conf
+          cx_uuid_error,
+
+      load
+        importing
+          i_runid       type zaps_run_id
+        raising
+          zcx_aps_settings_unknown_run
+          zcx_aps_settings_unknown_app
+          zcx_aps_settings_unknown_conf,
+
+      saveRunInfo.
 endclass.
 
 
 
 class zcl_aps_settings implementation.
 
-  method constructor.
+  method create.
     select single *
     from zaps_paraapp
     where appId eq @i_appId
@@ -51,6 +64,55 @@ class zcl_aps_settings implementation.
       exporting
         i_appId     = i_appId
         i_configid  = i_configId.
+    endif.
+
+    runInfo-runid = cl_uuid_factory=>create_system_uuid( )->create_uuid_c32( ).
+    runInfo-creation-creation_user = cl_abap_syst=>get_user_name( ).
+    runInfo-creation-creation_transaction = cl_abap_syst=>get_transaction_code( ).
+    get time stamp field runInfo-creation-creation_timestamp.
+    runInfo-appid = i_appId.
+    runInfo-configId = i_configId.
+    zif_aps_settings~setStatusStarted( ).
+  endmethod.
+
+
+  method load.
+    select single *
+    from zaps_runs
+    where runid eq @i_runId
+    into @runInfo.
+
+    if sy-subrc ne 0.
+      raise exception
+      type zcx_aps_settings_unknown_run
+      exporting
+        i_runid = i_runid.
+    endif.
+
+    select single *
+    from zaps_paraapp
+    where appId eq @runInfo-appId
+    into @appDefinition.
+
+    if sy-subrc ne 0.
+      raise exception
+      type zcx_aps_settings_unknown_app
+      exporting
+        i_appId = runInfo-appId.
+    endif.
+
+    select single *
+    from zaps_paraconf
+    where appId eq @runInfo-appId
+      and configId  eq @runInfo-configId
+    into @parallelizationConfiguration.
+
+    if sy-subrc ne 0.
+      raise exception
+      type zcx_aps_settings_unknown_conf
+      exporting
+        i_appId     = runInfo-appId
+        i_configid  = runInfo-configId.
     endif.
   endmethod.
 
@@ -101,6 +163,54 @@ class zcl_aps_settings implementation.
 
   method zif_aps_settings~shouldwaituntilfinished.
     result = parallelizationConfiguration-waituntilfinished.
+  endmethod.
+
+
+  method zif_aps_settings~getRunId.
+    result = runInfo-runId.
+  endmethod.
+
+
+  method saveRunInfo.
+    runInfo-change-change_user = cl_abap_syst=>get_user_name( ).
+    runInfo-change-change_transaction = cl_abap_syst=>get_transaction_code( ).
+    get time stamp field runInfo-change-change_timestamp.
+
+    modify zaps_runs
+    from @runInfo.
+
+    if sy-subrc ne 0.
+      " some serious malhandling has been done with the runInfo.
+      return.
+    endif.
+  endmethod.
+
+
+  method zif_aps_settings~setStatusAborted.
+    runInfo-status = zif_aps_settings~runStatusAborted.
+
+    saveRunInfo( ).
+  endmethod.
+
+
+  method zif_aps_settings~setStatusCompleted.
+    runInfo-status = zif_aps_settings~runStatusCompleted.
+
+    saveRunInfo( ).
+  endmethod.
+
+
+  method zif_aps_settings~setStatusRunning.
+    runInfo-status = zif_aps_settings~runStatusRunning.
+
+    saveRunInfo( ).
+  endmethod.
+
+
+  method zif_aps_settings~setStatusStarted.
+    runInfo-status = zif_aps_settings~runStatusStarted.
+
+    saveRunInfo( ).
   endmethod.
 
 endclass.

@@ -33,6 +33,8 @@ class zcl_aps_task_starter_dialog implementation.
 
     runningTasksCount = 0.
 
+    settings->setStatusRunning( ).
+
     loop at i_packages->*
     reference into data(package).
       data(taskNumber) = sy-tabix.
@@ -67,8 +69,7 @@ class zcl_aps_task_starter_dialog implementation.
         starting new task funcUnitTaskId
         calling zcl_aps_task_starter_dialog=>callback on end of task
         exporting
-          i_appid    = settings->getAppId( )
-          i_configid = settings->getConfigId( )
+          i_runId    = task->getRunId( )
           i_taskid   = task->getTaskId( )
         exceptions
           system_failure        = 1 message errorMessage
@@ -82,6 +83,8 @@ class zcl_aps_task_starter_dialog implementation.
           runningTasksCount = runningTasksCount + 1.
 
         when 1 or 2.
+          settings->setStatusAborted( ).
+
           " directly throw an exception as this is a major issue
           raise exception
           type zcx_aps_job_creation_error.
@@ -91,11 +94,15 @@ class zcl_aps_task_starter_dialog implementation.
             wait for asynchronous tasks
             until runningTasksCount < settings->getMaxParallelTasks( ).
           else.
+            settings->setStatusAborted( ).
+
             raise exception
             type zcx_aps_job_creation_error.
           endif.
 
         when others.
+          settings->setStatusAborted( ).
+
           " directly throw an exception as this is a major issue
           raise exception
           type zcx_aps_job_creation_error.
@@ -107,10 +114,7 @@ class zcl_aps_task_starter_dialog implementation.
     " loading the tasks does delete them from the temporary table
     " that's why it is always done.
     try.
-      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks(
-                                                                   i_appid    = settings->getappid( )
-                                                                   i_configid = settings->getconfigid( )
-                                                                 ).
+      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks( settings->getRunId( ) ).
     catch zcx_aps_task_storage
           zcx_aps_task_serialization
     into data(storageErrorLoad).
