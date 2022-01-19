@@ -68,6 +68,12 @@
      <MSGNR>010</MSGNR>
      <TEXT>Error calling the executable.</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZAPS_TASK</ARBGB>
+     <MSGNR>011</MSGNR>
+     <TEXT>At least one started job aborted.</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

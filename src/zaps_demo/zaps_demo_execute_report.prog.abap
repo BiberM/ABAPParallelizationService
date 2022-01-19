@@ -43,6 +43,7 @@ report zaps_demo_execute_report.
         zcx_aps_settings_unknown_conf
         zcx_aps_task_creation_error
         zcx_aps_job_creation_error
+        zcx_aps_jobs_aborted
   into data(parallelizationError).
     message parallelizationError
     type 'E'.

@@ -8,6 +8,7 @@ interface zif_parallelization_service
       "! @parameter i_infoFromCaller | <p class="shorttext synchronized" lang="en">object with data that helps the object selector</p>
       "! @raising zcx_aps_settings_unknown_app | <p class="shorttext synchronized" lang="en">invalid AppId</p>
       "! @raising zcx_aps_settings_unknown_conf | <p class="shorttext synchronized" lang="en">invalid ConfigId</p>
+      "! @raising zcx_aps_jobs_aborted | <p class="shorttext synchronized" lang="en">at least one job aborted</p>
       start
         importing
           i_appId           type zaps_appid
@@ -17,7 +18,8 @@ interface zif_parallelization_service
           zcx_aps_settings_unknown_app
           zcx_aps_settings_unknown_conf
           zcx_aps_task_creation_error
-          zcx_aps_job_creation_error,
+          zcx_aps_job_creation_error
+          zcx_aps_jobs_aborted,
 
       "! <p class="shorttext synchronized" lang="en">Function Unit parameter sets after execution</p>
       "!

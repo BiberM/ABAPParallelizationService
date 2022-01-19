@@ -49,7 +49,19 @@ class zcl_aps_task_starter_batch definition
 
       doWaitUntilFinished
         importing
-          i_jobChains           type jobChainListType.
+          i_jobChains           type jobChainListType,
+
+      hasAbortedJobs
+        importing
+          i_jobChains           type jobChainListType
+        returning
+          value(result)         type abap_bool,
+
+      detJobListFromJobChains
+        importing
+          i_jobChains      type jobchainlisttype
+        returning
+          value(result)    type zaps_batch_job_list.
 endclass.
 
 
@@ -108,6 +120,15 @@ class zcl_aps_task_starter_batch implementation.
 
       taskList = value zaps_task_chain( ).
     endtry.
+
+    " check job status for aborted ones
+    if hasAbortedJobs( jobChains ) = abap_true.
+      settings->setStatusAborted( ).
+
+      " no sense in collecting results
+      raise exception
+      type zcx_aps_jobs_aborted.
+    endif.
 
     " receiving the results is only useful if we waited for completion
     if settings->shouldWaitUntilFinished( ) = abap_true.
@@ -214,21 +235,39 @@ class zcl_aps_task_starter_batch implementation.
       return.
     endif.
 
-    " The jobs of one chain start in a sequence but do not care about
-    " the result of the predecessor (finished/aborted). So all jobs
-    " must have one of these status in order to be finished.
-    data(jobList) = value zaps_batch_job_list(
-                       for jobChain in i_jobChains
-                         for job in jobChain
-                         (
-                           jobname      = job->getjobname( )
-                           jobuniqueid  = job->getjobuniqueid( )
-                         )
-                     ).
+    data(joblist) = detJobListFromJobChains( i_jobchains ).
 
     while zcl_aps_batch_job=>arealljobsfinished( jobList ) = abap_false.
       wait up to 10 seconds.
     endwhile.
+  endmethod.
+
+  method detJobListFromJobChains.
+    " The jobs of one chain start in a sequence but do not care about
+    " the result of the predecessor (finished/aborted). So all jobs
+    " must have one of these status in order to be finished.
+    result  = value zaps_batch_job_list(
+                  for jobChain in i_jobChains
+                    for job in jobChain
+                    (
+                      jobname      = job->getjobname( )
+                      jobuniqueid  = job->getjobuniqueid( )
+                    )
+                ).
+  endmethod.
+
+
+  method hasAbortedJobs.
+    loop at i_jobChains
+    reference into data(jobChain).
+      loop at jobChain->*
+      into data(job).
+        if job->isAborted( ) = abap_true.
+          result = abap_true.
+          return.
+        endif.
+      endloop.
+    endloop.
   endmethod.
 
 endclass.

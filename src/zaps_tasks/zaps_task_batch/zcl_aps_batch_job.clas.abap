@@ -196,4 +196,20 @@ class zcl_aps_batch_job implementation.
     endif.
   endmethod.
 
+
+  method zif_aps_batch_job~isAborted.
+    select @abap_true
+    from tbtco
+    where jobname   = @jobName
+      and jobcount  = @jobUniqueId
+      and status    = 'A'
+    into @result
+    up to 1 rows.
+    endselect.
+
+    if sy-subrc <> 0.
+      result = abap_false.
+    endif.
+  endmethod.
+
 endclass.

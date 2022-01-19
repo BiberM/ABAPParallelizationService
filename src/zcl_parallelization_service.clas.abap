@@ -30,6 +30,11 @@ class zcl_parallelization_service implementation.
       data(packages) = zcl_aps_object_packetizer_fact=>provide( settings )->packetize( objects ).
 
       parameterSetsAfterExecution = zcl_aps_task_starter_factory=>provide( settings )->start( packages ).
+    catch zcx_aps_jobs_aborted
+    into data(jobsAbortedError).
+      " This one needs to be signalized to the caller. All others can be handled via message
+      raise exception jobsAbortedError.
+
     catch cx_static_check
     into data(executionError).
       if executionError is instance of if_t100_message.

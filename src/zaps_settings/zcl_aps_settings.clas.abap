@@ -194,6 +194,11 @@ class zcl_aps_settings implementation.
 
 
   method zif_aps_settings~setStatusCompleted.
+    " Aborted status must not be overwritten
+    if runInfo-status = zif_aps_settings~runStatusAborted.
+      return.
+    endif.
+
     runInfo-status = zif_aps_settings~runStatusCompleted.
 
     saveRunInfo( ).
@@ -211,6 +216,15 @@ class zcl_aps_settings implementation.
     runInfo-status = zif_aps_settings~runStatusStarted.
 
     saveRunInfo( ).
+  endmethod.
+
+
+  method zif_aps_settings~isAborted.
+    result = switch #(
+               runInfo-status
+               when zif_aps_settings~runStatusAborted then abap_true
+               else abap_false
+             ).
   endmethod.
 
 endclass.

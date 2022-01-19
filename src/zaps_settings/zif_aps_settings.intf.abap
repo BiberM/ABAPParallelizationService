@@ -87,8 +87,13 @@ interface zif_aps_settings
       "! <p class="shorttext synchronized" lang="en">Sets the status "Aborted"</p>
       setStatusAborted,
 
+      "! <p class="shorttext synchronized" lang="en">checks if the run had aborted tasks</p>
+      "! @parameter result | <p class="shorttext synchronized" lang="en">sign if one or more tasks aborted</p>
+      isAborted
+        returning
+          value(result)   type abap_bool,
+
       "! <p class="shorttext synchronized" lang="en">Should framework wait until all tasks finished?</p>
-      "!
       "! @parameter result | <p class="shorttext synchronized" lang="en">wait until all tasks finished?</p>
       shouldWaitUntilFinished
         returning

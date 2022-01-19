@@ -28,5 +28,9 @@ interface zif_aps_batch_job
         importing
           i_predecessor type ref to zif_aps_batch_job
         raising
-          zcx_aps_task_job_release.
+          zcx_aps_task_job_release,
+
+      isAborted
+        returning
+          value(result) type abap_bool.
 endinterface.

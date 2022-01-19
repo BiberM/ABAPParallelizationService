@@ -73,6 +73,12 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
+     <CMPNAME>ISABORTED</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>checks if the run had aborted tasks</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_SETTINGS</CLSNAME>
      <CMPNAME>SETSTATUSABORTED</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Sets the status &quot;Aborted&quot;</DESCRIPT>
