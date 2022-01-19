@@ -13,6 +13,8 @@ class zcl_aps_task_starter_dialog definition
 
     methods:
       zif_aps_task_starter~start redefinition.
+    METHODS: zif_aps_task_starter~retry REDEFINITION,
+             zif_aps_task_starter~resume REDEFINITION.
 
   protected section.
 
@@ -21,29 +23,25 @@ class zcl_aps_task_starter_dialog definition
       runningTasksCount   type int8.
 
     methods:
-      doWaitUntilFinished.
+      doWaitUntilFinished,
+
+      startTasks
+        importing
+          i_tasks         type zaps_task_chain
+        returning
+          value(r_result) type zaps_parameter_set_list
+        raising
+          zcx_aps_job_creation_error.
 endclass.
 
 
 
 class zcl_aps_task_starter_dialog implementation.
   method zif_aps_task_starter~start.
-    data:
-      errorMessage type text200.
-
-    runningTasksCount = 0.
-
-    settings->setStatusRunning( ).
+    data(tasks) = value zaps_task_chain( ).
 
     loop at i_packages->*
     reference into data(package).
-      data(taskNumber) = sy-tabix.
-
-      if runningTasksCount >= settings->getMaxParallelTasks( ).
-        wait for asynchronous tasks
-        until runningTasksCount < settings->getMaxParallelTasks( ).
-      endif.
-
       data(task) = createtask( package ).
 
       try.
@@ -57,6 +55,61 @@ class zcl_aps_task_starter_dialog implementation.
 
         continue.
       endtry.
+    endloop.
+
+    result = startTasks( tasks ).
+  endmethod.
+
+
+  method zif_aps_task_starter~resume.
+    try.
+      data(tasks) = zcl_aps_task_storage_factory=>provide( )->loadTasksForResume( settings->getRunId( ) ).
+    catch zcx_aps_task_storage
+          zcx_aps_task_serialization
+    into data(storageError).
+      message storageError
+      type 'I'
+      display like 'E'.
+
+      return.
+    endtry.
+
+    result = startTasks( tasks ).
+  endmethod.
+
+
+  method zif_aps_task_starter~retry.
+    try.
+      data(tasks) = zcl_aps_task_storage_factory=>provide( )->loadTasksForRetry( settings->getRunId( ) ).
+    catch zcx_aps_task_storage
+          zcx_aps_task_serialization
+    into data(storageError).
+      message storageError
+      type 'I'
+      display like 'E'.
+
+      return.
+    endtry.
+
+    result = startTasks( tasks ).
+  endmethod.
+
+  method startTasks.
+    data:
+      errorMessage type text200.
+
+    runningTasksCount = 0.
+
+    settings->setStatusRunning( ).
+
+    loop at i_tasks
+    into data(task).
+      data(taskNumber) = sy-tabix.
+
+      if runningTasksCount >= settings->getMaxParallelTasks( ).
+        wait for asynchronous tasks
+        until runningTasksCount < settings->getMaxParallelTasks( ).
+      endif.
 
       data(funcUnitTaskId) = |{ settings->getJobNamePrefix( ) }-{ taskNumber }|.
 
@@ -69,8 +122,8 @@ class zcl_aps_task_starter_dialog implementation.
         starting new task funcUnitTaskId
         calling zcl_aps_task_starter_dialog=>callback on end of task
         exporting
-          i_runId    = task->getRunId( )
-          i_taskid   = task->getTaskId( )
+          i_runId               = task->getRunId( )
+          i_taskid              = task->getTaskId( )
         exceptions
           system_failure        = 1 message errorMessage
           communication_failure = 2 message errorMessage
@@ -87,7 +140,7 @@ class zcl_aps_task_starter_dialog implementation.
 
           " directly throw an exception as this is a major issue
           raise exception
-          type zcx_aps_job_creation_error.
+            type zcx_aps_job_creation_error.
 
         when 3.
           if runningTasksCount > 0.
@@ -97,7 +150,7 @@ class zcl_aps_task_starter_dialog implementation.
             settings->setStatusAborted( ).
 
             raise exception
-            type zcx_aps_job_creation_error.
+              type zcx_aps_job_creation_error.
           endif.
 
         when others.
@@ -105,7 +158,7 @@ class zcl_aps_task_starter_dialog implementation.
 
           " directly throw an exception as this is a major issue
           raise exception
-          type zcx_aps_job_creation_error.
+            type zcx_aps_job_creation_error.
       endcase.
     endloop.
 
@@ -114,15 +167,15 @@ class zcl_aps_task_starter_dialog implementation.
     " loading the tasks does delete them from the temporary table
     " that's why it is always done.
     try.
-      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks( settings->getRunId( ) ).
-    catch zcx_aps_task_storage
-          zcx_aps_task_serialization
-    into data(storageErrorLoad).
-      message storageErrorLoad
-      type 'I'
-      display like 'E'.
+        data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks( settings->getRunId( ) ).
+      catch zcx_aps_task_storage
+            zcx_aps_task_serialization
+      into data(storageErrorLoad).
+        message storageErrorLoad
+        type 'I'
+        display like 'E'.
 
-      taskList = value zaps_task_chain( ).
+        taskList = value zaps_task_chain( ).
     endtry.
 
     " receiving the results is only useful if we waited for completion
@@ -130,10 +183,14 @@ class zcl_aps_task_starter_dialog implementation.
       loop at taskList
       into data(taskAfterExecution).
         insert lines of taskAfterExecution->getPackage( )-selections
-        into table result.
+        into table r_result.
       endloop.
     endif.
+
   endmethod.
+
+
+
 
   method callback.
     data:

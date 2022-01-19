@@ -13,6 +13,18 @@
    <DESCRIPTIONS>
     <SEOCOMPOTX>
      <CLSNAME>ZIF_APS_TASK_STARTER</CLSNAME>
+     <CMPNAME>RESUME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Restarts an execution with only the intial tasks</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_TASK_STARTER</CLSNAME>
+     <CMPNAME>RETRY</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Restarts an execution with all aborted and intial tasks</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_APS_TASK_STARTER</CLSNAME>
      <CMPNAME>START</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Starts a parallel execution</DESCRIPT>

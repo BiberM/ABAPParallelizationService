@@ -4,7 +4,7 @@ class zcl_parallelization_service definition
   create public .
 
   public section.
-    interfaces zif_parallelization_service .
+    interfaces zif_parallelization_service.
 
   protected section.
   private section.
@@ -65,6 +65,48 @@ class zcl_parallelization_service implementation.
         into table result.
       endif.
     endloop.
+  endmethod.
+
+
+  method zif_parallelization_service~resume.
+    try.
+      data(settings) = zcl_aps_settings_factory=>provideExisting( i_runId ).
+
+      parameterSetsAfterExecution = zcl_aps_task_starter_factory=>provide( settings )->resume( ).
+    catch zcx_aps_jobs_aborted
+    into data(jobsAbortedError).
+      " This one needs to be signalized to the caller. All others can be handled via message
+      raise exception jobsAbortedError.
+
+    catch cx_static_check
+    into data(executionError).
+      if executionError is instance of if_t100_message.
+        message executionError
+        type 'I'
+        display like 'E'.
+      endif.
+    endtry.
+  endmethod.
+
+
+  method zif_parallelization_service~retry.
+    try.
+      data(settings) = zcl_aps_settings_factory=>provideExisting( i_runId ).
+
+      parameterSetsAfterExecution = zcl_aps_task_starter_factory=>provide( settings )->retry( ).
+    catch zcx_aps_jobs_aborted
+    into data(jobsAbortedError).
+      " This one needs to be signalized to the caller. All others can be handled via message
+      raise exception jobsAbortedError.
+
+    catch cx_static_check
+    into data(executionError).
+      if executionError is instance of if_t100_message.
+        message executionError
+        type 'I'
+        display like 'E'.
+      endif.
+    endtry.
   endmethod.
 
 endclass.

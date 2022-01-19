@@ -25,6 +25,18 @@
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CLSNAME>ZIF_PARALLELIZATION_SERVICE</CLSNAME>
+     <CMPNAME>RESUME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Restarts an execution with only the intial tasks</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_PARALLELIZATION_SERVICE</CLSNAME>
+     <CMPNAME>RETRY</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Restarts an execution with all aborted and intial tasks</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZIF_PARALLELIZATION_SERVICE</CLSNAME>
      <CMPNAME>START</CMPNAME>
      <LANGU>E</LANGU>
      <DESCRIPT>Starts a parallel execution of App with Config</DESCRIPT>

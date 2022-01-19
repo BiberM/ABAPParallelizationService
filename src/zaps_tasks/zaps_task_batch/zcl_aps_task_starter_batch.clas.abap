@@ -8,6 +8,8 @@ class zcl_aps_task_starter_batch definition
   public section.
     methods:
       zif_aps_task_starter~start redefinition.
+    METHODS: zif_aps_task_starter~retry REDEFINITION,
+             zif_aps_task_starter~resume REDEFINITION.
 
   protected section.
 
@@ -61,7 +63,22 @@ class zcl_aps_task_starter_batch definition
         importing
           i_jobChains      type jobchainlisttype
         returning
-          value(result)    type zaps_batch_job_list.
+          value(result)    type zaps_batch_job_list,
+
+      startTasks
+        importing
+          i_taskchains    type zaps_task_chains
+        returning
+          value(r_result) type zaps_parameter_set_list
+        raising
+          zcx_aps_job_creation_error
+          zcx_aps_jobs_aborted,
+
+      splitTaskListToTaskChains
+        importing
+          i_tasks             type zaps_task_chain
+        returning
+          value(result) type zaps_task_chains.
 endclass.
 
 
@@ -75,7 +92,75 @@ class zcl_aps_task_starter_batch implementation.
 
     data(taskChains) = createTaskChains( i_packages ).
 
-    data(jobChains) = createJobChains( taskChains ).
+    result = startTasks( taskchains ).
+  endmethod.
+
+
+  method zif_aps_task_starter~resume.
+    try.
+      data(tasks) = zcl_aps_task_storage_factory=>provide( )->loadTasksForResume( settings->getRunId( ) ).
+    catch zcx_aps_task_storage
+          zcx_aps_task_serialization
+    into data(storageError).
+      message storageError
+      type 'I'
+      display like 'E'.
+
+      return.
+    endtry.
+
+    result = startTasks( splitTaskListToTaskChains( tasks ) ).
+  endmethod.
+
+
+  method zif_aps_task_starter~retry.
+    try.
+      data(tasks) = zcl_aps_task_storage_factory=>provide( )->loadTasksForRetry( settings->getRunId( ) ).
+    catch zcx_aps_task_storage
+          zcx_aps_task_serialization
+    into data(storageError).
+      message storageError
+      type 'I'
+      display like 'E'.
+
+      return.
+    endtry.
+
+    result = startTasks( splitTaskListToTaskChains( tasks ) ).
+  endmethod.
+
+
+  method splitTaskListToTaskChains.
+
+    data(numberOfNeededChains) = nmin(
+                                   val1 = lines( i_tasks )
+                                   val2 = settings->getmaxparalleltasks( )
+                                 ).
+
+    do numberOfNeededChains times.
+      append initial line
+      to result.
+    enddo.
+
+    loop at i_tasks
+    into data(task).
+      " Modulo only works with table indices starting at 0. ABAP instead starts counting at 1.
+      " This -1/+1 ensures correct indices for tasks n*numberofNeededTasks (last Chain)
+      data(chainNumber) = ( ( sy-tabix - 1 ) mod numberOfNeededChains ) + 1.
+
+      " ABAP doesn't like nested tables inside append command ...
+      data(chainReference) = ref #( result[ chainNumber ] ).
+
+      append task
+      to chainReference->*.
+    endloop.
+
+  endmethod.
+
+
+  method startTasks.
+
+    data(jobChains) = createJobChains( i_taskchains ).
 
     " When all job chains have been created successfully, raise the event to start them
     cl_batch_event=>raise(
@@ -98,9 +183,9 @@ class zcl_aps_task_starter_batch implementation.
                              ).
 
       raise exception
-      type zcx_aps_job_creation_error
-      exporting
-        i_previous  = detailledError.
+        type zcx_aps_job_creation_error
+        exporting
+          i_previous = detailledError.
     endif.
 
     settings->setStatusRunning( ).
@@ -110,15 +195,15 @@ class zcl_aps_task_starter_batch implementation.
     " loading the tasks does delete them from the temporary table
     " that's why it is always done.
     try.
-      data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks( settings->getRunId( ) ).
-    catch zcx_aps_task_storage
-          zcx_aps_task_serialization
-    into data(storageErrorLoad).
-      message storageErrorLoad
-      type 'I'
-      display like 'E'.
+        data(tasklist) = zcl_aps_task_storage_factory=>provide( )->loadalltasks( settings->getRunId( ) ).
+      catch zcx_aps_task_storage
+            zcx_aps_task_serialization
+      into data(storageErrorLoad).
+        message storageErrorLoad
+        type 'I'
+        display like 'E'.
 
-      taskList = value zaps_task_chain( ).
+        taskList = value zaps_task_chain( ).
     endtry.
 
     " check job status for aborted ones
@@ -127,7 +212,7 @@ class zcl_aps_task_starter_batch implementation.
 
       " no sense in collecting results
       raise exception
-      type zcx_aps_jobs_aborted.
+        type zcx_aps_jobs_aborted.
     endif.
 
     " receiving the results is only useful if we waited for completion
@@ -135,10 +220,12 @@ class zcl_aps_task_starter_batch implementation.
       loop at taskList
       into data(task).
         insert lines of task->getPackage( )-selections
-        into table result.
+        into table r_result.
       endloop.
     endif.
+
   endmethod.
+
 
   method createTaskChains.
     data(numberOfNeededChains) = nmin(

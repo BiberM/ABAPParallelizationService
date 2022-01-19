@@ -55,14 +55,16 @@ class zcl_aps_task_storage_db implementation.
       type zcx_aps_task_serialization.
     endtry.
 
-    delete from zaps_taskstore
-    where relid     = 'TS'
-      and runid     = @i_runId
-      and taskid    = @i_taskId.
+    if i_keepOnDB = abap_false.
+      delete from zaps_taskstore
+      where relid     = 'TS'
+        and runid     = @i_runId
+        and taskid    = @i_taskId.
 
-    if sy-subrc ne 0.
-      " was that destructive reading what we did before????
-      return.
+      if sy-subrc ne 0.
+        " was that destructive reading what we did before????
+        return.
+      endif.
     endif.
 
   endmethod.
@@ -172,6 +174,54 @@ class zcl_aps_task_storage_db implementation.
       insert zif_aps_task_storage~loadSingleTask(
                i_runId    = i_runId
                i_taskid   = task-taskId
+             )
+      into table result.
+    endloop.
+  endmethod.
+
+
+  method zif_aps_task_storage~loadTasksForResume.
+    select distinct zaps_taskstore~taskId
+    from zaps_taskstore
+      inner join zaps_taskstatus
+        on    zaps_taskstore~runid  = zaps_taskstatus~runid
+          and zaps_taskstore~taskid = zaps_taskstatus~taskid
+          and zaps_taskstatus~status = 'C'
+    where zaps_taskstore~relid = 'TS'
+      and zaps_taskstore~runid = @i_runId
+    into table @data(tasks).
+
+    loop at tasks
+    into data(task).
+      insert zif_aps_task_storage~loadSingleTask(
+               i_runId    = i_runId
+               i_taskid   = task-taskId
+               i_keepOnDB = abap_true
+             )
+      into table result.
+    endloop.
+  endmethod.
+
+
+  method zif_aps_task_storage~loadTasksForRetry.
+    select distinct zaps_taskstore~taskId
+    from zaps_taskstore
+      inner join zaps_taskstatus
+        on    zaps_taskstore~runid  = zaps_taskstatus~runid
+          and zaps_taskstore~taskid = zaps_taskstatus~taskid
+          and ( zaps_taskstatus~status = 'C'
+            or  zaps_taskstatus~status = 'S'
+            or  zaps_taskstatus~status = 'A' )
+    where zaps_taskstore~relid = 'TS'
+      and zaps_taskstore~runid = @i_runId
+    into table @data(tasks).
+
+    loop at tasks
+    into data(task).
+      insert zif_aps_task_storage~loadSingleTask(
+               i_runId    = i_runId
+               i_taskid   = task-taskId
+               i_keepOnDB = abap_true
              )
       into table result.
     endloop.
